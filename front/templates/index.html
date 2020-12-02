@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png/') }}"/> 
+    
+  <title>Pricing</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+  <!--
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  -->
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='css/clean-blog.min.css') }}" rel="stylesheet">
+
+  <style type="text/css">
+    
+    #box{
+      border-top-color: #00a65a;position: relative;
+      border-radius: 3px;
+      background: #ffffff;
+      border-top: 3px solid green;
+      margin-bottom: 20px;
+      width: 100%;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    }
+
+    #box-header{
+      color: #444;
+      display: block;
+      padding: 10px;
+      position: relative;
+      border-bottom: 1px solid #f4f4f4;
+    }
+
+    .pre2{overflow: auto;
+      font-family: monospace,monospace;
+      page-break-inside: avoid;
+      display: block;
+      padding: 10px;
+      margin: 12px 0 10px;
+      font-size: 15px;
+      line-height: 1.4em;
+      color: #fff;
+      word-break: break-all;
+      background-color: #404040;
+      border: 1px solid #ccc;
+      }
+
+    div.scroll_vertical {
+      height: 350px;
+      width: 100%;
+      overflow: auto;
+      border: 1px solid #666;
+      background-color: #404040;
+      padding: 8px;
+
+      -webkit-box-shadow: -10px -8px 25px -12px rgba(0,0,0,0.75);
+      -moz-box-shadow: -10px -8px 25px -12px rgba(0,0,0,0.75);
+      box-shadow: -10px -8px 25px -12px rgba(0,0,0,0.75);
+    }  
+
+  </style>
+
+</head>
+
+<script type="text/javascript">
+
+var seconds = 5;
+
+function mostrar_anio(){
+  var fecha = new Date();
+  var ano = fecha. getFullYear();
+
+  var html = '';
+  html += "<option>-- seleccione periodo --</option>" +
+          "<option> ene - " + ano + "</option>" +
+          "<option> feb - " + ano + "</option>" +
+          "<option> mar - " + ano + "</option>" +
+          "<option> abr - " + ano + "</option>" +
+          "<option> may - " + ano + "</option>" +
+          "<option> jun - " + ano + "</option>" +
+          "<option> jul - " + ano + "</option>" +
+          "<option> ago - " + ano + "</option>" +
+          "<option> sep - " + ano + "</option>" +
+          "<option> oct - " + ano + "</option>" +
+          "<option> nov - " + ano + "</option>" +
+          "<option> dic - " + ano + "</option>";
+  $("select#select_periodo").html(html); 
+}
+
+function mostrar_anio_rango(titulo){
+  var fecha = new Date();
+  var ano = fecha. getFullYear();
+  var anomenos1 = fecha. getFullYear()-1;
+  var anomenos2 = fecha. getFullYear()-2;
+  var anomenos3 = fecha. getFullYear()-3;
+  var anomenos4 = fecha. getFullYear()-4;
+
+  var html = '';
+  html += "<option>" + titulo + "</option>" +
+          "<option> ene - " + anomenos4 + "</option>" +
+          "<option> feb - " + anomenos4 + "</option>" +
+          "<option> mar - " + anomenos4 + "</option>" +
+          "<option> abr - " + anomenos4 + "</option>" +
+          "<option> may - " + anomenos4 + "</option>" +
+          "<option> jun - " + anomenos4 + "</option>" +
+          "<option> jul - " + anomenos4 + "</option>" +
+          "<option> ago - " + anomenos4 + "</option>" +
+          "<option> sep - " + anomenos4 + "</option>" +
+          "<option> oct - " + anomenos4 + "</option>" +
+          "<option> nov - " + anomenos4 + "</option>" +
+          "<option> dic - " + anomenos4 + "</option>" +
+          "<option> ene - " + anomenos3 + "</option>" +
+          "<option> feb - " + anomenos3 + "</option>" +
+          "<option> mar - " + anomenos3 + "</option>" +
+          "<option> abr - " + anomenos3 + "</option>" +
+          "<option> may - " + anomenos3 + "</option>" +
+          "<option> jun - " + anomenos3 + "</option>" +
+          "<option> jul - " + anomenos3 + "</option>" +
+          "<option> ago - " + anomenos3 + "</option>" +
+          "<option> sep - " + anomenos3 + "</option>" +
+          "<option> oct - " + anomenos3 + "</option>" +
+          "<option> nov - " + anomenos3 + "</option>" +
+          "<option> dic - " + anomenos3 + "</option>" +
+          "<option> ene - " + anomenos2 + "</option>" +
+          "<option> feb - " + anomenos2 + "</option>" +
+          "<option> mar - " + anomenos2 + "</option>" +
+          "<option> abr - " + anomenos2 + "</option>" +
+          "<option> may - " + anomenos2 + "</option>" +
+          "<option> jun - " + anomenos2 + "</option>" +
+          "<option> jul - " + anomenos2 + "</option>" +
+          "<option> ago - " + anomenos2 + "</option>" +
+          "<option> sep - " + anomenos2 + "</option>" +
+          "<option> oct - " + anomenos2 + "</option>" +
+          "<option> nov - " + anomenos2 + "</option>" +
+          "<option> dic - " + anomenos2 + "</option>" +
+          "<option> ene - " + anomenos1 + "</option>" +
+          "<option> feb - " + anomenos1 + "</option>" +
+          "<option> mar - " + anomenos1 + "</option>" +
+          "<option> abr - " + anomenos1 + "</option>" +
+          "<option> may - " + anomenos1 + "</option>" +
+          "<option> jun - " + anomenos1 + "</option>" +
+          "<option> jul - " + anomenos1 + "</option>" +
+          "<option> ago - " + anomenos1 + "</option>" +
+          "<option> sep - " + anomenos1 + "</option>" +
+          "<option> oct - " + anomenos1 + "</option>" +
+          "<option> nov - " + anomenos1 + "</option>" +
+          "<option> dic - " + anomenos1 + "</option>" +
+          "<option> ene - " + ano + "</option>" +
+          "<option> feb - " + ano + "</option>" +
+          "<option> mar - " + ano + "</option>" +
+          "<option> abr - " + ano + "</option>" +
+          "<option> may - " + ano + "</option>" +
+          "<option> jun - " + ano + "</option>" +
+          "<option> jul - " + ano + "</option>" +
+          "<option> ago - " + ano + "</option>" +
+          "<option> sep - " + ano + "</option>" +
+          "<option> oct - " + ano + "</option>" +
+          "<option> nov - " + ano + "</option>" +
+          "<option> dic - " + ano + "</option>";
+
+  if (titulo == '-- periodo inicio --') {        
+    $("select#select_periodo_ini").html(html); 
+  } else if (titulo == '-- periodo fin --'){
+    $("select#select_periodo_fin").html(html); 
+  }      
+
+}
+
+$(document).ready(function() {
+      hide_group_periodo() 
+      hide_itemvolumen()        
+  });  
+
+
+function hide_loading() {
+    $("#loading").hide('slow', function(){
+    });
+  }
+
+function fast_loading() {
+    $("#loading").show('fast', function(){
+    });
+  }
+
+function progreso_paso0() {
+    $("#paso0progreso").show('fast', function(){
+    });
+    $("#paso0complete").hide('slow', function(){
+    });
+  }
+function complete_paso0() {
+    $("#paso0progreso").hide('slow', function(){
+    });
+    $("#paso0complete").show('fast', function(){
+    });
+  }
+function progreso_paso1() {
+    $("#paso1progreso").show('fast', function(){
+    });
+    $("#paso1complete").hide('slow', function(){
+    });
+  }
+function complete_paso1() {
+    $("#paso1progreso").hide('slow', function(){
+    });
+    $("#paso1complete").show('fast', function(){
+    });
+  }
+function progreso_paso2() {
+    $("#paso2progreso").show('fast', function(){
+    });
+    $("#paso2complete").hide('slow', function(){
+    });
+  }
+function complete_paso2() {
+    $("#paso2progreso").hide('slow', function(){
+    });
+    $("#paso2complete").show('fast', function(){
+    });
+  }       
+function progreso_paso3() {
+    $("#paso3progreso").show('fast', function(){
+    });
+    $("#paso3complete").hide('slow', function(){
+    });
+  }
+function complete_paso3() {
+    $("#paso3progreso").hide('slow', function(){
+    });
+    $("#paso3complete").show('fast', function(){
+    });
+  }
+function progreso_paso4() {
+    $("#paso4progreso").show('fast', function(){
+    });
+    $("#paso4complete").hide('slow', function(){
+    });
+  }  
+function complete_paso4() {
+    $("#paso4progreso").hide('slow', function(){
+    });
+    $("#paso4complete").show('fast', function(){
+    });
+  }
+function progreso_paso5() {
+    $("#paso5progreso").show('fast', function(){
+    });
+    $("#paso5complete").hide('slow', function(){
+    });
+  }  
+function complete_paso5() {
+    $("#paso5progreso").hide('slow', function(){
+    });
+    $("#paso5complete").show('fast', function(){
+    });
+  }
+function progreso_paso6() {
+    $("#paso6progreso").show('fast', function(){
+    });
+    $("#paso6complete").hide('slow', function(){
+    });
+  }  
+function complete_paso6() {
+    $("#paso6progreso").hide('slow', function(){
+    });
+    $("#paso6complete").show('fast', function(){
+    });
+  }  
+
+function show_group_periodo() {
+    $("#group_periodo").show('fast', function(){
+    });
+    $("#rango_periodo").hide('slow', function(){
+    });    
+  }  
+
+function hide_group_periodo() {
+    $("#rango_periodo").show('fast', function(){
+    });
+    $("#group_periodo").hide('slow', function(){
+    });
+  }  
+
+function show_group_itemvolumen() {
+    $("#group_itemvolumen").show('fast', function(){
+    });
+  }  
+
+function hide_group_itemvolumen() {
+    $("#group_itemvolumen").hide('slow', function(){
+    });
+  } 
+
+function val_periodo(){
+    var select_tipocarga    = $('select#select_tipocarga').val();
+    if (select_tipocarga == 'Full') {
+      hide_group_periodo();
+      hide_group_itemvolumen();
+      mostrar_anio_rango('-- periodo inicio --')
+      mostrar_anio_rango('-- periodo fin --')
+    } else if (select_tipocarga == 'Incremental'){
+      show_group_periodo();
+      mostrar_anio();
+
+    }
+  } 
+
+function val_fuente(){
+    var tipocarga      = $('select#select_tipocarga').val();
+    var select_fuente    = $('select#select_fuente').val();
+    if (tipocarga == 'Incremental') {
+      if (select_fuente == 'Scantrack') {
+        hide_group_itemvolumen();
+      } else if (select_fuente == 'Retail'){
+        show_group_itemvolumen();
+      }
+    } else if (tipocarga == 'Full') {
+      hide_group_itemvolumen();
+    }
+    
+  }    
+
+function ejecutar(){
+      var tipocarga      = $('select#select_tipocarga').val();
+      var periodo        = $('select#select_periodo').val();
+      var periodo_ini    = $('select#select_periodo_ini').val();
+      var periodo_fin    = $('select#select_periodo_fin').val();
+      var fuente         = $('select#select_fuente').val();
+      var itemvolumen    = $('select#select_itemvolumen').val();
+
+      $("select#select_tipocarga").removeAttr("style");
+      $("select#select_periodo_ini").removeAttr("style");
+      $("select#select_periodo_fin").removeAttr("style");
+      $("select#select_periodo").removeAttr("style");
+      $("select#select_fuente").removeAttr("style");
+      $("select#select_itemvolumen").removeAttr("style");
+
+      if (tipocarga=='' || tipocarga == '-- seleccione tipo de carga --'){
+          $.notify("El campo tipo carga es obligatorio", "warn");
+          //alert("El campo tipocarga es obligatorio");
+          $("select#select_tipocarga").css({'border-color':'red'});
+          return;
+      }
+
+      if (tipocarga == 'Incremental') {
+          if (periodo=='' || periodo == '-- seleccione periodo --'){
+            $.notify("El campo periodo es obligatorio", "warn");
+            //alert("El campo periodo es obligatorio");
+            $("select#select_periodo").css({'border-color':'red'});
+            return;
+        }
+      } 
+
+      if (tipocarga == 'Full') {
+          if (periodo_ini=='' || periodo_ini == '-- periodo inicio --'){
+            $.notify("El campo periodo ini es obligatorio", "warn");
+            //alert("El campo periodo ini es obligatorio");
+            $("select#select_periodo_ini").css({'border-color':'red'});
+            return;
+          }  
+          if (periodo_fin=='' || periodo_fin == '-- periodo fin --'){
+            $.notify("El campo periodo fin es obligatorio", "warn");
+            //alert("El campo periodo fin es obligatorio");
+            $("select#select_periodo_fin").css({'border-color':'red'});
+            return;
+          }    
+      }
+
+      if (fuente=='' || fuente == '-- seleccione fuente --'){
+          $.notify("El campo fuente es obligatorio", "warn");
+          //alert("El campo fuente es obligatorio");
+          $("select#select_fuente").css({'border-color':'red'});
+          return;
+      }
+
+      if (fuente == 'Retail' && tipocarga == 'Incremental') {
+          if (itemvolumen=='' || itemvolumen == '-- seleccione item volumen --'){
+              $.notify("El campo item volumen es obligatorio", "warn");
+              //alert("El campo itemvolumen es obligatorio");
+              $("select#select_itemvolumen").css({'border-color':'red'});
+              return;
+          }
+      }
+
+      //alert('http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen);
+
+      $.ajax({
+            url: 'http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen,
+            type: "GET",            
+            
+            beforeSend: function(){
+              if (itemvolumen == "Solo item volumen" ){
+                progreso_paso6();  
+              } else{
+                progreso_paso0();
+                progreso_paso1();
+                progreso_paso2();
+                progreso_paso3();
+                progreso_paso4();
+                progreso_paso5();  
+                fast_loading();              
+              }
+              window.interval_function = setInterval(get_consultar_logs, 1000);
+            },            
+
+            dataType: 'JSON',
+            headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+            success: function(res){
+                consultar_logs();                
+                //hide_loading();
+                var resp = res[0];
+                //$.notify("El proceso: Tuvo la siguiente respuesta: "+resp+"", "info");
+                $('.seconds').html(res);
+            }, 
+            error: function(e) {
+                $.notify("Error en el proceso","warn");
+                //alert("Error en el proceso"); 
+                hide_loading();
+            },
+
+            complete: function(response_objet){
+              clearInterval(interval_function);              
+              seconds = 5;
+              $(".seconds").text("Ejecución Completa");
+              $.notify("Ejecución completa","success");
+              hide_loading();
+            }
+
+        });
+
+    }
+
+function consultar_logs(){
+
+    $.ajax({
+            url: 'http://localhost:8080/param/leo',
+            type: "GET",
+            dataType: 'JSON',
+            headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+            success: function(res){                  
+                
+                var listadoLogs = res[0].log;
+                var maestraLogs = res[1].mlog;
+
+
+                for (const property in maestraLogs) {
+                  //console.log(`${property}: ${maestraLogs[property]}`);
+                  if (maestraLogs[property] == 'CargarinsumoOasis'){
+                    complete_paso0();
+                  }
+
+                  if (maestraLogs[property] == 'Rutinascore...'){
+                    complete_paso1();
+                  }
+
+                  if (maestraLogs[property] == 'AgregarVariablesAdicionales'){
+                    complete_paso2();
+                  }
+
+                  if (maestraLogs[property] == 'ActualizarCodificaciones'){
+                    complete_paso3();
+                  }
+
+                  if (maestraLogs[property] == 'FicherosCodificaciones'){
+                    complete_paso4();
+                  }
+
+                  if (maestraLogs[property] == 'Guardartransaccionalventas'){
+                    complete_paso5();
+                  }
+
+                  if (maestraLogs[property] == 'Guardartransaccionalventas'){
+                    complete_paso5();
+                  }
+
+                  if (maestraLogs[property] == 'ItemVolumenGenerado'){
+                    complete_paso6();
+                  }
+
+                }                
+
+                var maestraLogs_ = ''
+                  maestraLogs.forEach(i => {
+                    maestraLogs_ += "<span>"+
+                             "<p>" + i + "</p>"+
+                             "<span>";
+                  })
+
+                var listadoLogs_ = ''
+                  listadoLogs.forEach(i => {
+                    listadoLogs_ += "<span>"+
+                             "<p>" + i + "</p>"+
+                             "<span>";
+                  })  
+
+                $('div#logs').html(listadoLogs_);
+            }, 
+            error: function(e) {
+                $.notify("Error en el proceso","warn");
+                //alert("Error en el proceso"); 
+                hide_loading();
+            }
+        });
+} 
+
+function get_consultar_logs(){
+  seconds = seconds - 1;
+  if (seconds == 0) {
+     consultar_logs();
+     seconds = 5
+  }
+  $(".seconds").text("Tiempo para actualizacion del log: " + seconds);
+}  
+
+</script>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Pricing al comprador</a>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('static/img/img.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1></h1>
+            <span class="subheading"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+	
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+                <div class="tab-content">
+                    <div id="bloque" class="col-sm-12 col-md-12">
+                      <div class="panel panel-default">
+
+                        <div id="box">
+                          <div id="box-header">
+                              <h4 class="box-title">
+                              Parametros Entrada <span class="fa fa-cubes" style="color: green;"></span>
+                            </h4>
+                          </div> 
+                        </div>                         
+
+                         <form class="form-horizontal">
+              						
+
+                          <div class="card-body"> 
+
+                          <div id="tipocarga"> 
+                            <label for="full_name_id" class="control-label">Tipo de Carga</label>
+                            <div class="row">
+                              <div class="col-lg-12 col-md-12">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-battery-full"></i></span>
+                                    </div>
+                                      <select id="select_tipocarga" class="form-control" onchange="val_periodo();">
+                                          <option>-- seleccione tipo de carga --</option>
+                                          <option>Full</option>
+                                          <option>Incremental</option>
+                                      </select>  
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div> 
+
+
+                          <div id="group_periodo" style="display: none;">  
+                            <label for="full_name_id" class="control-label">Periodo</label>
+                            <div class="row">
+                              <div class="col-lg-12 col-md-12">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i></span>
+                                    </div>
+                                      <select class="form-control" id="select_periodo">                                                                                  
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div> 
+                          
+                           <div id="rango_periodo" style="display: none;">
+                           <label for="full_name_id" class="control-label">Rango Periodo</label>  
+                            <div class="row">
+                              <div class="col-lg-6 col-md-6">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i></span>
+                                    </div>
+                                      <select class="form-control" id="select_periodo_ini">
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+
+                              <div class="col-lg-6 col-md-6">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i></span>
+                                    </div>
+                                      <select class="form-control" id="select_periodo_fin">
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>  
+                            <label for="full_name_id" class="control-label">Fuente</label>
+                            <div class="row">
+                              <div class="col-lg-12 col-md-12">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-cubes"></i></span>
+                                    </div>
+                                      <select id="select_fuente" class="form-control" id="fuente" onchange="val_fuente()">
+                                          <option>-- seleccione fuente --</option>
+                                          <option value="Retail">Retail</option>
+                                          <option value="Scantrack">Scantrack</option>
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+            					    <div id="group_itemvolumen" style="display: none;">   
+                            <label for="full_name_id" class="control-label">Item Volumen</label>
+                            <div class="row">
+                              <div class="col-lg-12 col-md-12">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-cogs"></i></span>
+                                    </div>
+                                      <select id="select_itemvolumen" class="form-control" >
+                                          <option>-- seleccione item volumen --</option>
+                                          <option>Si</option>
+                                          <option>No</option>
+                                          <option>Solo item volumen</option>
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          </div>     
+            					    
+            					    <div class="box-footer" style="float:right;">
+                              <button type="button" class="btn btn-info pull-left" onclick="ejecutar()">Ejecutar</button>
+            					    </div> 
+            					    <br>   
+                          <br>				    
+            					</form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-3">
+                <div class="tab-content">
+                    <div id="bloque" class="col-sm-4 col-md-12">
+                      <div class="panel panel-default">
+                        <div id="box">
+                          <div id="box-header" id="proceso_">
+                              <h4 class="box-title">
+                              Proceso <span class="fa fa-cogs" style="color: green;"></span>
+                            </h4>
+                          </div>
+
+                          <br>
+                          
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso1complete" style="display: none; padding-bottom: 15px;">                                
+                                <label for="full_name_id" class="control-label">Cargando vista Oasis </label> 
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso1progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Cargando vista Oasis</label>  
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso1complete" style="display: none; padding-bottom: 15px;">                                
+                                <label for="full_name_id" class="control-label">Rutinas Core</label> 
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso1progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Rutinas Core</label>  
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso2complete" style="display: none; padding-bottom: 15px;">
+                                <label for="full_name_id" class="control-label">Variables adicionales</label> 
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso2progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Variables adicionales</label> 
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso3complete" style="display: none; padding-bottom: 15px;">
+                                <label for="full_name_id" class="control-label">Actualizar codificaciones</label> 
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso3progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Actualizar codificaciones</label> 
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso4complete" style="display: none; padding-bottom: 15px;">
+                                <label for="full_name_id" class="control-label">Ficheros codificaciones</label>
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso4progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Ficheros codificaciones</label>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso5complete" style="display: none; padding-bottom: 15px;">
+                                <label for="full_name_id" class="control-label">Transaccional ventas</label>
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso5progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Transaccional ventas</label> 
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12">
+                              <div id="paso6complete" style="display: none; padding-bottom: 15px;">
+                                <label for="full_name_id" class="control-label">Item Volumen</label>
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"
+                                  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                    100% Complete
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="paso6progreso" style="display: none; padding-bottom: 15px;">
+                              <label for="full_name_id" class="control-label">Item Volumen</label> 
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                      Progreso ...
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                        </div>    
+
+                        <div id="respuestaApi"></div>
+                        <div id="respuestaApi2"></div>
+
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-3">
+                <div class="tab-content">
+                    <div id="bloque" class="col-sm-6 col-md-12">
+                      <div class="panel panel-default">
+                        <div id="box">
+                          <div id="box-header">
+                              <h4 class="box-title">
+                              Archivos S3 <span class="fa fa-eye" style="color: green;"></span>
+                            </h4>                            
+                          </div> 
+                        </div>                          
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</section>
+
+<section class="content">
+    <div class="container-fluid" >
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+                <div class="tab-content">
+                    <div id="bloque" class="col-sm-6 col-md-12">
+                      <div class="panel panel-default">
+                        <div id="box">
+                          <div id="box-header">
+                              
+                              <h4 class="box-title">
+                              logs <span class="fa fa-file" style="color: green;"></span>
+                              <span class="fa fa-history" style="color: green; float:right;" title="Refrescar Logs" onclick="consultar_logs();"></span>
+                              <span style="padding-left:100px;font-weight: normal;" class="seconds"></span>   
+                              <img id="loading" src="static/img/cargando.gif" width="150" height="30" style="float: center;display: none;">
+                              </h4>                      
+                          </div>
+
+                            <div class="scroll_vertical">   
+                                                                              
+                              <pre class="pre2">
+                                <code>
+                                  <div id="logs">
+                                    Logs ...
+                                  </div>
+                                </code>
+                              </pre>
+                           </div>   
+                        </div>                          
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</section>		
+
+
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p class="copyright text-muted">Copyright &copy; Nutresa 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <!-- DataTables -->
+  <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.js') }}"></script>
+  <!-- jQuery UI 1.11.4 -->
+  <script src="{{ url_for('static', filename='vendor/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
+  <!-- Custom scripts for this template -->
+  <script src="{{ url_for('static', filename='js/clean-blog.min.js') }}"></script>
+  <!-- notify -->
+  <script src="{{ url_for('static', filename='vendor/notify/notify.js') }}"></script>
+
+</body>
+
+</html>
