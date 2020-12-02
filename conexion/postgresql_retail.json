@@ -1,0 +1,9 @@
+{
+    "database_motor": "postgresql",
+	"database_username" : "postgres" ,
+	"database_password" : "leo" ,
+	"database_ip" : "localhost",
+	"database_name" : "pricingShopper",
+	"database_driver": "postgresql+psycopg2",
+	"database_options" : "dbo,public" 
+}

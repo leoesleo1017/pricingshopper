@@ -1,0 +1,1 @@
+SELECT * FROM PUBLIC.temp_09_transaccional_ventas

@@ -1,0 +1,8 @@
+{
+	"connStr" : "DSN=IMPALA" ,
+	"db" : "proceso_bipa_vpef" ,
+	"infoLeng" : 100,
+	"refresh" : 420,
+	"sql_folder_relative_path" : "sql",
+	"log_path": "logs/"
+}

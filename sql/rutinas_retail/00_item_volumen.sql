@@ -1,0 +1,21 @@
+DROP TABLE IF EXISTS PUBLIC.temp_ma_peso;
+CREATE TABLE PUBLIC.temp_ma_peso AS 
+
+WITH 
+peso AS (
+	SELECT *,
+			 CASE
+			 WHEN "0_uxe" IS NULL AND "1_uxe" IS NULL AND "2_uxe" IS NULL AND "3_uxe" IS NULL THEN '1'
+			 ELSE "0_uxe" 
+			 END AS "DES_UXE"
+	FROM PUBLIC.ma_peso_prueba a
+	-- WHERE "TAG" = 'I192259'
+)
+
+SELECT  -- agregar categoria y subcategoria
+		CASE
+		WHEN CHAR_LENGTH("TAG") > 30 THEN ('P' || SUBSTRING("TAG", 13, 1) || RIGHT("TAG",8)) ELSE "TAG" END AS "PRODUCTO_nls",		
+		"TAMANO" AS "PESO",
+		CASE WHEN "TAMANO" IS NULL THEN 'OTROS TAMANOS' ELSE ("TAMANO" || 'GRS') END AS "PESO_DES",
+		CASE WHEN "DES_UXE" = '0' AND "UXE" IS NOT NULL THEN "UXE" ELSE "DES_UXE" END AS "FACTOR"
+FROM peso
