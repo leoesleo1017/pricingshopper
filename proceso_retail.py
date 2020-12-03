@@ -1,3 +1,4 @@
+
 """
 @author: leonardo.patino
 """
@@ -302,7 +303,7 @@ class ProcesoRatail:
                     "cod_codificacion"      : 'COD_' + res_macodi[c][1],
                     "inicial_codificacion"  : res_macodi[c][2]                              
                 }
-            m.executeFile(self.folder + '08_subrutina_actualizar_codificacion.sql',params,debug=False)  
+            m.executeFile(self.folder + '05_subrutina_actualizar_codificacion.sql',params,debug=False)  
             #print(res_macodi[c][1]," : ",val)
             #ARMAR EL INSERT
             tabla_temp = "select * from PUBLIC." + tablatemp 
@@ -316,7 +317,7 @@ class ProcesoRatail:
                             "codificacion"          : temp_res[i][0],
                             "tablatemp"             : tablatemp                            
                         }            
-                    res_codi = m.executeFile(self.folder + '08_subrutina_insert_va_codificacion.sql',params)
+                    res_codi = m.executeFile(self.folder + '05_subrutina_insert_va_codificacion.sql',params)
                     if res_codi == "error":
                         res = res_codi
                         msg = "Problemas con 08_subrutina_actualizar_codificacion"
@@ -331,7 +332,7 @@ class ProcesoRatail:
                     msg = "la tabla no tiene data: " + tablatemp
                     log.Debug(msg) #si debug True ver las tablas temp sin data 
                     m.escribirLog_config("[Debug] " + msg)
-            m.executeFile(self.folder + '08_subrutina_drop_act.sql',params={"tablatemp" : tablatemp}) 
+            m.executeFile(self.folder + '05_subrutina_drop_act.sql',params={"tablatemp" : tablatemp}) 
             msg = "Tabla eliminada: " + tablatemp
             log.Info(msg)
             m.escribirLog_config("[Info]" + msg)                       
@@ -350,7 +351,7 @@ class ProcesoRatail:
                             "tipo_codificacion"  : res_codi[i][0]                         
                         }
                 try:
-                    res_query = m.executeFile(self.folder + '08_subrutina_guardar_codificaciones.sql',params,devolucion=True,debug=False)                                     
+                    res_query = m.executeFile(self.folder + '07_subrutina_guardar_codificaciones.sql',params,devolucion=True,debug=False)                                     
                     res_query = res_query.rename(columns = {0:res_codi[i][0],1:'COD_' + res_codi[i][0]})                   
                     res_query.to_csv('ficheros/codificaciones/' + res_codi[i][0] + '.csv', header=True, index=False) #pendiente separar por ","
                 except Exception as e:
@@ -369,14 +370,14 @@ class ProcesoRatail:
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)
         try:
-            res_query = m.executeFile(self.folder + '09_subrutina_guardar_transaccional_ventas.sql',devolucion=True,debug=False)                      
+            res_query = m.executeFile(self.folder + '08_subrutina_guardar_transaccional_ventas.sql',devolucion=True,debug=False)                      
             if len(res_query) != 0:
                 res_query.to_csv('ficheros/codificaciones/transaccional_ventas.csv', header=True, index=False)
                 res = "ok"
             else:
                 res = "noData" 
         except Exception as e:
-            msg = "Proceso suspendido problemas con 09_subrutina_guardar_transaccional_ventas " + str(e)
+            msg = "Proceso suspendido problemas con 08_rutina_guardar_transaccional_ventas " + str(e)
             log.Error(msg)
             m.escribirLog_config("[Error] " + msg)
             res = "error"        
@@ -387,11 +388,11 @@ class ProcesoRatail:
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)
         try:
-            res_query = m.executeFile(self.folder + '09_subrutina_limpiar_ventas_historia.sql',devolucion=True,debug=False)
-            res_query = m.executeFile(self.folder + '09_subrutina_acumular_ventas.sql',devolucion=True,debug=False)
+            res_query = m.executeFile(self.folder + '08_subrutina_limpiar_ventas_historia.sql',devolucion=True,debug=False)
+            res_query = m.executeFile(self.folder + '08_subrutina_acumular_ventas.sql',devolucion=True,debug=False)
             res = res_query                     
         except Exception as e:
-            msg = "Proceso suspendido problemas con 09_subrutina_acumular_ventas " + str(e)
+            msg = "Proceso suspendido problemas con 08_subrutina_acumular_ventas " + str(e)
             log.Error(msg)
             m.escribirLog_config("[Error] " + msg)
             res = "error"        
@@ -435,7 +436,7 @@ class ProcesoRatail:
             m.escribirLog_config("[Info] " + msg)
             lista_rutinas = (
                 'temporal_origen_va.sql', #solo aplica para la primera ejecución en producción
-                '10_rutina_eliminar_tablastemp.sql',
+                '08_subrutina_eliminar_tablastemp.sql', # esta rutina se ejecuta tanto en el inicio como en en final del ciclo
                 '00_item_volumen.sql', #no lo ejecuta , solo lo valida
                 '00_rutina_select_mes_cat.sql',
                 '01_rutina_prep_datos.sql',
@@ -454,11 +455,11 @@ class ProcesoRatail:
                 '05_subrutina_va_codificacion5.sql',
                 '05_subrutina_va_codificacion6.sql',
                 '05_subrutina_va_codificacion7.sql',
-                '06_subrutina_productos.sql',                
-                '08_subrutina_atributos_mercado.sql',
-                '07_subrutina_maestra_productos.sql',
-                '09_rutina_transaccional_ventas.sql',
-                '10_rutina_eliminar_tablastemp.sql'           
+                '06_rutina_productos.sql',                
+                '07_rutina_atributos_mercado.sql',
+                '06_subrutina_maestra_productos.sql',
+                '08_rutina_transaccional_ventas.sql',
+                '08_subrutina_eliminar_tablastemp.sql'           
                 )            
             param = {"mes"   : 'nielsen_retail_' + mes}
             i = 0

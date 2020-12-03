@@ -1,0 +1,1 @@
+DELETE FROM PUBLIC.temp_09_transaccional_ventas_historia;
