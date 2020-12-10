@@ -102,8 +102,7 @@ class ProcesoRatail:
             'object',
             'object',
             'int64',
-            'object']
-        
+            'object']        
         for i in range(len(df.columns)):
             #print(str(df.dtypes[i]).replace('dtype(',''), " = ", list_formatos[i])
             if str(df.dtypes[i]).replace('dtype(','') != list_formatos[i]:                
@@ -112,8 +111,7 @@ class ProcesoRatail:
                 m.escribirLog_config("[Error] " + msg)  
                 return "error"
             else:
-                return "ok"
-            
+                return "ok"            
             
     def cargarInsumoOasis(self,nom_fichero,nom_bd):
         try:
@@ -202,12 +200,172 @@ class ProcesoRatail:
             log.Info(msg)
             m.escribirLog_config("[Info] " + msg)
             res = self.validar_vista(df)
-            m.insert_sql_masivo(df,name_table = nom_bd)
+            if res == 'ok':
+                m.insert_sql_masivo(df,name_table = nom_bd)
+            else:
+                msg = "La vista no tiene la estructura esperada"
+                log.Error(msg)
+                res = 'error'
         except Exception as e:
             msg = "Problemas para cargar la vista: " + nom_fichero + " " + str(e)
             log.Error(msg)
             res = 'error'
         return res
+    
+    def insumoOasisconexion(self,nom_bd,periodoOasis,categoria=None):
+        """
+        metodo que se conecta a la base de datos de Oasis y genera la vista y lo conviernte a pandas
+        """
+        try:
+            if categoria is not None:                
+                params = {"categoria" : categoria}
+                df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
+            else:
+                params = {"periodo" : periodoOasis}
+                df = oasis.executeFile(self.folder + '00_vista_oasis.sql',params,devolucion=True)
+            if len(df) == 0:
+                msg = "La vista no tiene información en el periodo suministrado"
+                log.Error(msg)
+            else:    
+                df = df.rename(columns = {
+                    0:'COD_PRODUCTO',
+                    1:'MERCADO_DL',
+                    2:'MERCADO',
+                    3:'REGION',
+                    4:'CANAL',
+                    5:'SELECCION',
+                    6:'PERIODO',
+                    7:'COD_TAG',
+                    8:'DUP_PRODUCTO',
+                    9:'DUP_CONSISTENCIA',
+                    10:'DUP_EMPAQUE',
+                    11:'DUP_NOMBRE_FABRICANTE',
+                    12:'DUP_INTEGRAL_NO_INTEGRAL',
+                    13:'DUP_MARCA',
+                    14:'DUP_NIVEL_AZUCAR',
+                    15:'DUP_OFERTA_PROMOCIONAL',
+                    16:'DUP_PRESENTACION',
+                    17:'RANGO_MIN',
+                    18:'RANGO_MAX',
+                    19:'DUP_SABOR',
+                    20:'DUP_SEGMENTO',
+                    21:'DUP_CATEGORIA',
+                    22:'DUP_SUBMARCA',
+                    23:'DUP_SUBTIPO',
+                    24:'TAMANO',
+                    25:'TAMANO_SINPROC',
+                    26:'DUP_TIPO',
+                    27:'DUP_TIPOCARNE',
+                    28:'DUP_TIPO_SABOR',
+                    29:'DUP_VARIEDAD',
+                    30:'DUP_IMPORTADO',
+                    31:'NIVEL',
+                    32:'FUENTE',
+                    33:'VENTAS_EN_VOLUMEN_KILOS_000',
+                    34:'VENTAS_EN_VALOR_000000',
+                    35:'DIST_TIENDAS_VENDEDORAS_POND',
+                    36:'DIST_TIENDAS_VENDEDORAS_NUM',
+                    37:'PROMEDIO_VENTAS_KILOS',
+                    38:'COMPRAS_PROMEDIO_POR_TIENDA_KILOS',
+                    39:'INVENTARIO_PROMEDIO_POR_TIENDA_KILOS',
+                    40:'COMPRAS_TOTALES_KILOS_000',
+                    41:'INVENTARIO_ACTIVO_KILOS_000',
+                    42:'INVENTARIO_TOTAL_KILOS_000',
+                    43:'DIST_MANEJANTES_POND',
+                    44:'DIST_MANEJANTES_NUM',
+                    45:'DIST_AGOTADOS_NUM',
+                    46:'DIST_TIENDAS_COMPRADORAS_NUM',
+                    47:'DIST_TIENDAS_COMPRADORAS_POND',
+                    48:'DIST_AGOTADOS_POND',
+                    49:'COMPRAS_DIRECTAS_KILOS_000',
+                    50:'DIST_MATERIAL_POP_NUM',
+                    51:'DIST_MATERIAL_POP_POND',
+                    52:'DIST_EXHIBI_ESPECIALES_NUM',
+                    53:'DIST_EXHIBI_ESPECIALES_POND',
+                    54:'DIST_OFERTAS_NUM',
+                    55:'DIST_OFERTAS_POND',
+                    56:'DIST_ACTIVIDAD_PROMOCIONAL_NUM',
+                    57:'DIST_ACTIVIDAD_PROMOCIONAL_POND',
+                    58:'DIST_EXHIBICIONES_NUM_MAX',
+                    59:'DIST_EXHIBICIONES_POND_MAX',
+                    60:'DIST_EXHIBICIONES_POND_PROM',
+                    61:'DIST_NUM_AGOTADOS_PROM',
+                    62:'DIST_NUM_MANEJANTE_MAX',
+                    63:'DIST_NUM_MANEJANTE_PROM',
+                    64:'DIST_NUM_TIENDAS_COMPRANDO_MAX',
+                    65:'DIST_NUM_TIENDAS_VENDIENDO_MAX',
+                    66:'DIST_OFERTAS_NUM_MAX',
+                    67:'DIST_OFERTAS_NUM_PROM',
+                    68:'DIST_OFERTAS_POND_MAX',
+                    69:'DIST_OFERTAS_POND_PROM',
+                    70:'DIST_POND_AGOTADOS_PROM',
+                    71:'DIST_POND_MANEJANTE_MAX',
+                    72:'DIST_POND_MANEJANTE_PROM',
+                    73:'DIST_POND_TIENDAS_COMPRANDO_MAX',
+                    74:'DIST_POND_TIENDAS_VENDIENDO_MAX',
+                    75:'NOMBRE_ARCHIVO',
+                    76:'TAMANO_nls',
+                    77:'NRO_LINEA_ARCHIVO',
+                    78:'RANGO_SINPROC'}) 
+                
+                df['VENTAS_EN_VOLUMEN_KILOS_000'] = df['VENTAS_EN_VOLUMEN_KILOS_000'].astype(float)
+                df['VENTAS_EN_VALOR_000000'] = df['VENTAS_EN_VALOR_000000'].astype(float)
+                df['DIST_TIENDAS_VENDEDORAS_POND'] = df['DIST_TIENDAS_VENDEDORAS_POND'].astype(float)
+                df['DIST_TIENDAS_VENDEDORAS_NUM'] = df['DIST_TIENDAS_VENDEDORAS_NUM'].astype(float)
+                df['PROMEDIO_VENTAS_KILOS'] = df['PROMEDIO_VENTAS_KILOS'].astype(float)
+                df['COMPRAS_PROMEDIO_POR_TIENDA_KILOS'] = df['COMPRAS_PROMEDIO_POR_TIENDA_KILOS'].astype(float)
+                df['INVENTARIO_PROMEDIO_POR_TIENDA_KILOS'] = df['INVENTARIO_PROMEDIO_POR_TIENDA_KILOS'].astype(float)
+                df['COMPRAS_TOTALES_KILOS_000'] = df['COMPRAS_TOTALES_KILOS_000'].astype(float)
+                df['INVENTARIO_ACTIVO_KILOS_000'] = df['INVENTARIO_ACTIVO_KILOS_000'].astype(float)
+                df['INVENTARIO_TOTAL_KILOS_000'] = df['INVENTARIO_TOTAL_KILOS_000'].astype(float)
+                df['DIST_MANEJANTES_POND'] = df['DIST_MANEJANTES_POND'].astype(float)
+                df['DIST_MANEJANTES_NUM'] = df['DIST_MANEJANTES_NUM'].astype(float)
+                df['DIST_AGOTADOS_NUM'] = df['DIST_AGOTADOS_NUM'].astype(float)
+                df['DIST_TIENDAS_COMPRADORAS_NUM'] = df['DIST_TIENDAS_COMPRADORAS_NUM'].astype(float)
+                df['DIST_TIENDAS_COMPRADORAS_POND'] = df['DIST_TIENDAS_COMPRADORAS_POND'].astype(float)
+                df['DIST_AGOTADOS_POND'] = df['DIST_AGOTADOS_POND'].astype(float)
+                df['COMPRAS_DIRECTAS_KILOS_000'] = df['COMPRAS_DIRECTAS_KILOS_000'].astype(float)
+                df['DIST_MATERIAL_POP_NUM'] = df['DIST_MATERIAL_POP_NUM'].astype(float)
+                df['DIST_MATERIAL_POP_POND'] = df['DIST_MATERIAL_POP_POND'].astype(float)
+                df['DIST_EXHIBI_ESPECIALES_NUM'] = df['DIST_EXHIBI_ESPECIALES_NUM'].astype(float)
+                df['DIST_EXHIBI_ESPECIALES_POND'] = df['DIST_EXHIBI_ESPECIALES_POND'].astype(float)
+                df['DIST_OFERTAS_NUM'] = df['DIST_OFERTAS_NUM'].astype(float)
+                df['DIST_OFERTAS_POND'] = df['DIST_OFERTAS_POND'].astype(float)
+                df['DIST_ACTIVIDAD_PROMOCIONAL_NUM'] = df['DIST_ACTIVIDAD_PROMOCIONAL_NUM'].astype(float)
+                df['DIST_ACTIVIDAD_PROMOCIONAL_POND'] = df['DIST_ACTIVIDAD_PROMOCIONAL_POND'].astype(float)
+                df['DIST_EXHIBICIONES_NUM_MAX'] = df['DIST_EXHIBICIONES_NUM_MAX'].astype(float)
+                df['DIST_EXHIBICIONES_POND_MAX'] = df['DIST_EXHIBICIONES_POND_MAX'].astype(float)
+                df['DIST_EXHIBICIONES_POND_PROM'] = df['DIST_EXHIBICIONES_POND_PROM'].astype(float)
+                df['DIST_NUM_AGOTADOS_PROM'] = df['DIST_NUM_AGOTADOS_PROM'].astype(float)
+                df['DIST_NUM_MANEJANTE_MAX'] = df['DIST_NUM_MANEJANTE_MAX'].astype(float)
+                df['DIST_NUM_MANEJANTE_PROM'] = df['DIST_NUM_MANEJANTE_PROM'].astype(float)
+                df['DIST_NUM_TIENDAS_COMPRANDO_MAX'] = df['DIST_NUM_TIENDAS_COMPRANDO_MAX'].astype(float)
+                df['DIST_NUM_TIENDAS_VENDIENDO_MAX'] = df['DIST_NUM_TIENDAS_VENDIENDO_MAX'].astype(float)
+                df['DIST_OFERTAS_NUM_MAX'] = df['DIST_OFERTAS_NUM_MAX'].astype(float)
+                df['DIST_OFERTAS_NUM_PROM'] = df['DIST_OFERTAS_NUM_PROM'].astype(float)
+                df['DIST_OFERTAS_POND_MAX'] = df['DIST_OFERTAS_POND_MAX'].astype(float)
+                df['DIST_OFERTAS_POND_PROM'] = df['DIST_OFERTAS_POND_PROM'].astype(float)
+                df['DIST_POND_AGOTADOS_PROM'] = df['DIST_POND_AGOTADOS_PROM'].astype(float)
+                df['DIST_POND_MANEJANTE_MAX'] = df['DIST_POND_MANEJANTE_MAX'].astype(float)
+                df['DIST_POND_MANEJANTE_PROM'] = df['DIST_POND_MANEJANTE_PROM'].astype(float)
+                df['DIST_POND_TIENDAS_COMPRANDO_MAX'] = df['DIST_POND_TIENDAS_COMPRANDO_MAX'].astype(float)
+                df['DIST_POND_TIENDAS_VENDIENDO_MAX'] = df['DIST_POND_TIENDAS_VENDIENDO_MAX'].astype(float)
+    
+                msg = "********** Cargar insumo Oasis ***************** \nTamaño del archivo: " + str(df.shape) + " periodo: " + periodoOasis
+                log.Info(msg)
+                m.escribirLog_config("[Info] " + msg)
+                res = self.validar_vista(df)
+                if res == 'ok':
+                    m.insert_sql_masivo(df,name_table = nom_bd)
+                else:
+                    msg = "La vista no tiene la estructura esperada"
+                    log.Error(msg)
+                    res = 'error'    
+        except Exception as e:
+            msg = "Problemas para cargar la vista desde oasis" + str(e)
+            log.Error(msg)
+            res = 'error'
+        return res        
         
     def ingresarReglas(self,va):
         """
@@ -288,7 +446,7 @@ class ProcesoRatail:
         """
         actualizar codificaciones se debe ejecutar luego de temp 04
         NOTA: al momento de insertar las nuevas variables garantizar que se inserte en orden alfabetico de la variable (los componentes que componen la variable)
-        """      
+        """
         msg = "********** Actualizar Codificaciones **********"
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)
@@ -296,7 +454,7 @@ class ProcesoRatail:
         res_macodi = m.execute(tipocodi,param=True)          
         #c = 0
         for c in range(len(res_macodi)):
-            tablatemp = 'temp_08_act_' + res_macodi[c][1].lower()            
+            tablatemp = 'temp_05_act_' + res_macodi[c][1].lower()            
             params = {
                     "tablatemp"             : tablatemp,
                     "tipo_codificacion"     : res_macodi[c][1],
@@ -355,10 +513,10 @@ class ProcesoRatail:
                     res_query = res_query.rename(columns = {0:res_codi[i][0],1:'COD_' + res_codi[i][0]})                   
                     res_query.to_csv('ficheros/codificaciones/' + res_codi[i][0] + '.csv', header=True, index=False) #pendiente separar por ","
                 except Exception as e:
-                    msg = "Proceso suspendido problemas con 08_subrutina_guardar_codificaciones " + str(e)
+                    msg = "Proceso suspendido problemas con 07_subrutina_guardar_codificaciones " + str(e)
                     log.Error(msg)
                     m.escribirLog_config("[Error] " + msg)
-                    break                
+                    break
                 i += 1    
                 res = "ok"
         else:
@@ -375,7 +533,7 @@ class ProcesoRatail:
                 res_query.to_csv('ficheros/codificaciones/transaccional_ventas.csv', header=True, index=False)
                 res = "ok"
             else:
-                res = "noData" 
+                res = "noData"
         except Exception as e:
             msg = "Proceso suspendido problemas con 08_rutina_guardar_transaccional_ventas " + str(e)
             log.Error(msg)
@@ -396,7 +554,7 @@ class ProcesoRatail:
             log.Error(msg)
             m.escribirLog_config("[Error] " + msg)
             res = "error"        
-        return res 
+        return res
                
     #Item Volumen
     def itemvolumen(self,item_volumen):
@@ -418,14 +576,20 @@ class ProcesoRatail:
                 m.escribirLog_config("[Info] " + msg)
         return "ok"   
     
-    def main(self,drop=True,mes='jun_20',item_volumen=False,acumVentas=False):  
+    def main(self,drop=True,mes='jun_20', periodoOasis='2020-09-01',categoria=None,item_volumen=False,acumVentas=False):  
         #limpiar logs y almacenar en historicos logs
-        m.executeFile(self.folder + '00_limpiar_logs.sql')              
+        m.executeFile(self.folder + '00_limpiar_logs.sql')
         msg = "********** Ejecucion iniciada *******************"
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)        
-        res_oasis = self.cargarInsumoOasis('VISTA_RETAIL_NIELSEN_'+ mes,'nielsen_retail_' + mes)
-        res_oasis = "ok"
+        if categoria is not None:
+            res_oasis = self.insumoOasisconexion('nielsen_retail_' + categoria.replace(" ","_").lower() ,periodoOasis,categoria=categoria)
+            param = {"mes"   : 'nielsen_retail_' + categoria.replace(" ","_").lower()}
+        else:
+            #res_oasis = self.cargarInsumoOasis('VISTA_RETAIL_NIELSEN_'+ mes,'nielsen_retail_' + mes) #cuando sea un archivo plano
+            res_oasis = self.insumoOasisconexion('nielsen_retail_' + mes,periodoOasis)
+            param = {"mes"   : 'nielsen_retail_' + mes}
+        #res_oasis = "ok"
         if res_oasis != "ok":
             msg = "Proceso suspendido problemas con insumo Oasis"
             log.Error(msg)
@@ -460,8 +624,7 @@ class ProcesoRatail:
                 '06_subrutina_maestra_productos.sql',
                 '08_rutina_transaccional_ventas.sql',
                 '08_subrutina_eliminar_tablastemp.sql'           
-                )            
-            param = {"mes"   : 'nielsen_retail_' + mes}
+                )                        
             i = 0
             while i < len(lista_rutinas):    
                 try:
@@ -547,12 +710,33 @@ item = EnrichmentOps()
 
 programa = ProcesoRatail()
 m = Sql(programa.get_config('postgresql_retail'),log)
-#programa.main()
-  
+oasis = Sql(programa.get_config('mysql_oasis'),log)
+   
+     
 """
-va = "SELECT * FROM ma_mercado"
-lista_reglas = m.execute(va,param=True) 
-"""         
-    
+#posgresql
+#con devolucion
+param = {'inicial' : 'TB'}  
+res = m.executeFile(folder + 'borrar.sql',params=param,devolucion=True)
+print(res)
+#sin devolucion
+param = {'inicial' : 'TB'}  
+m.executeFile(folder + 'borrar2.sql',params=param)
+
+
+#mysqlLocalhost   
+res = prueba.executeFile(folder + 'prueba.sql',devolucion=True)
+print(res)
+
+#mysqloasis 
+param = {'periodo' : '2020-09-01'}  
+res = oasis.executeFile(folder + '00_vista_oasis.sql', params=param, devolucion=True)
+print(res)
+
+"""
+
+
+
+
     
     

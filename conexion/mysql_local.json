@@ -1,0 +1,9 @@
+{   
+    "database_motor": "mysql",
+	"database_username" : "root" ,
+	"database_password" : "" ,
+	"database_ip" : "localhost",
+	"database_name" : "prueba",
+	"database_driver": "mysql+mysqlconnector" ,	
+	"database_options" : "" 
+}

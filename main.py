@@ -12,12 +12,13 @@ from proceso_retail import ProcesoRatail
 from proceso_scantrack  import ProcesoScantrack 
 
 class proceso:    
-    def proceso_retail_(self,periodo,itemvol='No',acumVentas=False):  
+    def proceso_retail_(self,periodo,itemvol='No',acumVentas=False,categoria=None):  
         programaRetail = ProcesoRatail()
-        if itemvol == "Si":
-            programaRetail.main(drop=False, mes=periodo, item_volumen=True,acumVentas=acumVentas)
+        periodoOasis = periodo[-2:] + '20-' + self.val_Cero(str(self.format_mes_num(periodo[0:3]))) + '-01'
+        if itemvol == "Si" and categoria is None:
+            programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=True, categoria=categoria, acumVentas=acumVentas)
         else:
-            programaRetail.main(drop=False, mes=periodo, item_volumen=False,acumVentas=acumVentas)                
+            programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=False, categoria=categoria, acumVentas=acumVentas)                
         #res = programaRetail.actualizarcodificaciones()
         #res = programaRetail.reglas_varadinegocios()
         #res = programaRetail.actualizarvariablesadicionales()
@@ -30,9 +31,9 @@ class proceso:
         res = programaRetail.itemvolumen(item_volumen=True)
         return res
         
-    def proceso_scantrack_(self,periodo,acumVentas=False):   
+    def proceso_scantrack_(self,periodo,acumVentas=False,categoria=None):   
         programaScantrack = ProcesoScantrack()
-        programaScantrack.main(drop=False, mes=periodo,acumVentas=acumVentas)
+        programaScantrack.main(drop=False, mes=periodo,categoria=categoria,acumVentas=acumVentas)
         #programaScantrack.actualizarcodificaciones()
         #programaScantrack.reglas_varadinegocios()
         return "ok"
@@ -122,12 +123,44 @@ class proceso:
             salida = 'dic'
         return salida 
 
-        
+    def val_Cero(self,param):
+        """
+        valida si el mes es de 1 a 9 para adicionar el cero
+        """
+        if len(param) == 1:
+            param = "0" + param
+        return param
         
 
-"""
-mes = 'jul_2020'
+""" TEST RETAIL
+periodo = 'jul_20'
 itemvolumen = 'No'
 p = proceso()
-res = p.proceso_retail_(mes,itemvolumen)
+periodoOasis = periodo[-2:] + '20-' + p.val_Cero(str(p.format_mes_num(periodo[0:3]))) + '-01'
+acumVentas = False
+categoria = 'CAFE MOLIDO'
+
+#validar solo carga oasis
+programaRetail = ProcesoRatail()
+res_oasis = programaRetail.insumoOasisconexion('nielsen_retail_' + periodo,periodoOasis)
+print(res_oasis)
+
+programaRetail = ProcesoRatail()
+programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=False, categoria=categoria, acumVentas=acumVentas)
+
+"""
+
+""" TEST SCANTRACK  #hay que formatear los campos de scantrack 
+periodo = 'jul_20'
+ano = '2020'
+grupo = '5'
+periodoOasis = {'ano' : ano, 'grupo' : grupo}  
+categoria = 'CAFE MOLIDO'
+
+p = proceso()
+acumVentas = False  
+
+#validar solo carga oasis
+programaScantrack = ProcesoScantrack()
+programaScantrack.main(drop=False, mes=periodo, periodoOasis=periodoOasis, categoria=categoria, acumVentas=acumVentas)
 """

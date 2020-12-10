@@ -71,14 +71,14 @@ class Sql():
             if debug:
                 msg = "Tabla creada en sql con el nombre:" + str(name_table) + " metodo: " + str(metodo) + " en la base de datos: " + str(self.database_name)
                 self.log.Info(msg)
-                self.escribirLog_config("[Info] " + msg)
+                #self.escribirLog_config("[Info] " + msg)
             conn = database_connection.connect()
             conn.close()
             return 'registros Insertados'
         except Exception as e:
             msg = "Problemas para insertar en sql " + str(e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            #self.escribirLog_config("[Error] " + msg)
     
     def insert_sql_masivo(self,df,name_table,lote=300,metodo="replace"):
         """Inserta de forma masiva un dataframe a la base de datos, 
@@ -105,7 +105,7 @@ class Sql():
         except Exception as e:
             msg = "Problemas inserción masiva en sql " + str(e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            #self.escribirLog_config("[Error] " + msg)
         
     def listar_sql(self,query,fichero=False,nombre=False):
         """Ejecuta un query y lo convierte a objeto pandas, si fichero es True entonces lo 
@@ -122,14 +122,14 @@ class Sql():
                 data.to_csv('salidas/' + str(nombre) + '.csv', header=True, index=False)
                 msg = "Archivo " + str(nombre) + " generado en la carpeta salidas correctamente"
                 self.log.Info(msg)   
-                self.escribirLog_config("[Info] " + msg)                 
+                #self.escribirLog_config("[Info] " + msg)                 
                 return "Archivo generado correctamente"
             else:
                 return data
         except Exception as e:
             msg = "Problemas para listar en sql " + str(e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            #self.escribirLog_config("[Error] " + msg)
     
     """Pendiente hacer: Ejecuta un query y lo guarda en filePath"""
     
@@ -144,7 +144,7 @@ class Sql():
         except Exception as e:
             msg = "Problemas con removeComment!: " + str(e)
             self.log.Info(msg)
-            self.escribirLog_config("[Info] " + msg)
+            #self.escribirLog_config("[Info] " + msg)
             raise
             
     def getQueries(self,path,params=None):
@@ -168,12 +168,12 @@ class Sql():
             if self.debug:
                 msg = "Retornando {0} consultas".format(len(qs))
                 self.log.Info(msg)
-                self.escribirLog_config("[Info] " + msg)        
+                #self.escribirLog_config("[Info] " + msg)        
             return qs
         except Exception as e:
             msg = "Problemas con getQueries!: " + str(e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            #self.escribirLog_config("[Error] " + msg)
             raise
     
             
@@ -185,37 +185,39 @@ class Sql():
             tic = time.time()
             msg = 'Ejecutando Archivo: {0}'.format(filePath)
             self.log.Info(msg)
-            self.escribirLog_config("[Info] " + msg)
+            #self.escribirLog_config("[Info] " + msg)
             #lenMsg = self.lengthMSG
             queries = self.getQueries(filePath, params)
             
-            for q in queries:
-                if debug:
-                    print(q)
-                #cursor = self.getConn().cursor()
-                if self.debug:
-                    msg = ' -> Ejecutando Consulta {0} del archivo'.format(i)
-                    self.escribirLog_config("[Info] " + msg)
-                    self.log.Info(msg)                
-                else:
-                    res_execute = self.execute(q)
-                    if res_execute == "error":
-                        res = res_execute
-                    else:
-                        res = 'Ejecución interna en el motor bd , Sin resultados'
-                #cursor.execute( q )
-                i += 1
-            if devolucion:
-                res = self.listar_sql(q)
+            if devolucion: #ejecutar solo el último lote (sql separado por coma) y devolverlo como df 
+                for q in queries:
+                    if debug:
+                        print(q) #solo mostrar query
+                        res = 'sin resultados'
+                    else:    
+                        res = self.listar_sql(q)
+                        
+            else: #recorrer lostes separados por coma y ejecutar en el motor 1 a 1 sin devolución de resultados
+                for q in queries:
+                    if debug:
+                        print(q) #solo mostrar query
+                        res = 'sin resultados'
+                    else:   
+                        msg = ' -> Ejecutando Consulta {0} del archivo'.format(i)
+                        #self.escribirLog_config("[Info] " + msg)
+                        self.log.Info(msg)   
+                        res = self.execute(q)
+                        i += 1
+                
             toc = time.time()
             msg = 'Duración de Archivo (s): {0}'.format( int(toc-tic) )
             self.log.Info(msg)
-            self.escribirLog_config("[Info] " + msg)
+            #self.escribirLog_config("[Info] " + msg)
             return res
         except Exception as e:
             msg = "Problemas con executeFile!, Query {0}, Error: {1} ".format( i , e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            #self.escribirLog_config("[Error] " + msg)
             raise
    
         

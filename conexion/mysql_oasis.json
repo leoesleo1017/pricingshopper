@@ -1,0 +1,9 @@
+{   
+    "database_motor": "mysql",
+	"database_username" : "ADMINS_UIM" ,
+	"database_password" : "usuario_uim_1" ,
+	"database_ip" : "10.24.1.123",
+	"database_name" : "oasis",
+	"database_driver": "mysql+mysqlconnector" ,	
+	"database_options" : "" 
+}

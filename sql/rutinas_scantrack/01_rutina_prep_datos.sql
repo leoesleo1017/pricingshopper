@@ -2,17 +2,10 @@ DROP TABLE IF EXISTS PUBLIC.temp_01_jerarquiacategorias;
 CREATE TABLE PUBLIC.temp_01_jerarquiacategorias AS 
 
 WITH 
-periodo AS (
-	SELECT *,
-			 a."REGION" || '-' || a."CANAL" AS MERCADO_
-	FROM PUBLIC.temp_s_min_level a
-	JOIN PUBLIC.conf_fechas b ON b."fecha" = a."PERIODO"
-),
-
-reduc_cod_pdto1 AS ( --GARANTIZAR QUE EL NUEVO PRODUCTO_nls no esté repetido,en caso de estar repetido suspende el proceso
-	SELECT *,
+reduc_cod_pdto1 AS ( 
+	SELECT *,			
 			"COD_TAG",'P' || SUBSTRING("COD_TAG", 13, 1) || RIGHT("COD_TAG",8) AS PRODUCTO_nls
-	FROM periodo
+	FROM PUBLIC.temp_s_min_level
 	-- WHERE "DUP_CATEGORIA" = 'HELADOS'
 ),
 /*
@@ -20,7 +13,7 @@ reduc_cod_pdto2 AS (
 	SELECT *,
 			"COD_TAG" AS "COD_TAG",
 			"COD_TAG" AS "PRODUCTO_nls"
-	FROM periodo
+	FROM PUBLIC.temp_s_min_level
 	WHERE "DUP_CATEGORIA" <> 'HELADOS'
 ),
 
@@ -32,13 +25,46 @@ reduc_cod_pdto AS (
 	FROM reduc_cod_pdto2
 ),
 */
-valores_problema AS ( 
+valores_problema AS ( -- pendiente sacar el porcentaje de ceros
 	SELECT *,
-		ROUND("ventas_valor_nls"::numeric,2) AS "_ventas_valor_nls",
-		ROUND("ventas_volumen_nls"::numeric,2)	AS "_ventas_volumen_nls"
+	   "REGION_NLS" || '-' || "CANAL_NLS" AS MERCADO_,  -- los mercados son ciudades principales y no regiones como en retail
+		ROUND("VENTAS_VALOR_nls"::numeric,2) AS "_ventas_valor_nls",
+		ROUND("VENTAS_VOLUMEN_nls"::numeric,2)	AS "_ventas_volumen_nls"
 	FROM reduc_cod_pdto1
-	WHERE "ventas_volumen_nls" > 0
-	AND "ventas_valor_nls" > 0
+	WHERE "VENTAS_VOLUMEN_nls" > 0
+	AND "VENTAS_VALOR_nls" > 0
+),
+
+v_nuevos_productos AS (
+	SELECT "producto_nls",
+		   "DUP_PRODUCTO",
+		   "DUP_CATEGORIA",
+		   "TAMANO",
+		   SUM("VENTAS_VALOR_nls") AS ventas_valor_nls,
+		   SUM("VENTAS_VOLUMEN_nls") AS ventas_volumen_nls
+	FROM valores_problema
+	GROUP BY "producto_nls","DUP_PRODUCTO","DUP_CATEGORIA","TAMANO"
+),
+
+v_nuevos_productos2 AS (
+	SELECT "DUP_CATEGORIA",
+		   COUNT(1) AS "totalProductos"
+	FROM valores_problema
+	GROUP BY "DUP_CATEGORIA"
+),
+
+v_nuevos_productos3 AS (
+	SELECT a."DUP_CATEGORIA",
+			 COUNT(1) AS "totalProductos"
+	FROM v_nuevos_productos a
+	JOIN scantrack.ma_peso b ON a."producto_nls" = b."producto_nls"
+	GROUP BY a."DUP_CATEGORIA"
+),
+
+v_nuevos_productos4 AS ( -- esta vista debe ir en una tabla para ir consolidando cada vez que corra el proceso en retail y scantrack, garantizar registros unicos en la tabla por categoria, para los casos que se necesite correr un mes de nuevo por algún error
+	SELECT *
+	FROM v_nuevos_productos2 a
+	JOIN v_nuevos_productos3 b ON a."DUP_CATEGORIA" = b."DUP_CATEGORIA"
 ),
 
 ma_jerarquia_categorias AS (
@@ -46,27 +72,31 @@ ma_jerarquia_categorias AS (
 	FROM PUBLIC.ma_negocio a
 	JOIN PUBLIC.ma_category b ON a.idnegocio = b.idnegocio
 	JOIN PUBLIC.ma_subcategory c ON b.idcategory = c.idcategory
+	JOIN PUBLIC.ma_fuente_categoria d ON b.idcategory = d.idcategory
+	JOIN PUBLIC.ma_fuente e ON d.idfuente = e.id
+	WHERE e.fuente = 'col_nls_scantrack'
 ),
 
-jerarquia_categorias AS ( -- VAR ADI NUEVAS 
+jerarquia_categorias AS ( -- VAR ADI NUEVAS --
 	SELECT *
 	FROM valores_problema a
 	LEFT JOIN ma_jerarquia_categorias b ON a."DUP_CATEGORIA" = b."subcategory"
 ),
 
 estructura AS (  -- sumar ventas valor y ventas volumen y agrupar por todos los campos
-	SELECT "PERIODO" 																									AS "PERIODO_NLS",
+	SELECT 
+			 -- "PERIODO" 																								AS "PERIODO_NLS",
 			 "producto_nls" 																							AS "PRODUCTO_nls",
-			 "MERCADO"   	 																							AS "MERCADO_nls",
-			 "mercado_"																									AS "MERCADO",
+			 "MERCADO_DL" 	 																							AS "MERCADO_nls",
+			 "mercado_" 	 																							AS "MERCADO",
 			 "TAMANO" 																									AS "TAMANO_nls_",
-			 CASE WHEN "TAMANO_nls" = 'S/A' THEN 'OTROS TAMANOS' ELSE "TAMANO_nls" END 			AS "TAMANO_nls",
+			 "TAMANO_SINPROC"																				 			AS "TAMANO_nls",
 			 "DUP_PRODUCTO" 																							AS "DESCRIPCION_nls", 
-			 'COLOMBIA_' || 'col_nls_retail' || '_MENSUAL'													AS "FUENTE",
+			 'COLOMBIA_' || 'col_nls_scantrack' || '_MENSUAL'												AS "FUENTE",
 			 'KG'																											AS "UNIDAD", -- APLICA SOLO PARA COLOMBIA
-			 "anio" 																										AS "AÑO",
-			 "mes" 																										AS "MES",
-			 "fecha" 																									AS "FECHA",
+			 "ANIO" 																										AS "AÑO",
+			 "GRUPO" 																									AS "GRUPO",
+			 "ANO" || '-' || "MES" || '-' || '01'  															AS "FECHA",
 			 "negocio" 																									AS "NEGOCIO",
 			 CASE WHEN "DUP_MARCA" = 'CORONA FLASH' THEN 'CHOCOLATE DE MESA' ELSE "subcategory" END	AS "SUBCATEGORY",
 			 "category" 																								AS "CATEGORY",
@@ -89,33 +119,35 @@ estructura AS (  -- sumar ventas valor y ventas volumen y agrupar por todos los 
 			 '' 																											AS "SEGM_PRECIO",
 			 ''  																											AS "SEGMENTO_TMLUC",
 			 '' 		 																									AS "SUBCANAL",
-			 "RANGO_MIN", 
-			 "RANGO_MAX",
-			 "REGION"   																								AS "REGION", -- * --
-			 "CANAL"    																								AS "CANAL", -- * --
-			 "DUP_OFERTA_PROMOCIONAL" 																				AS "OFERTA_PROMOCION",
+			 "RANGO_MIN", -- * VALIDAR CON CARLOS -- 
+			 "RANGO_MAX", -- * --
+			 "REGION_NLS" 																								AS "REGION", -- * --
+			 "CANAL_NLS"  																								AS "CANAL", -- * --
+			 CASE WHEN "DUP_PRODUCTO" LIKE '%]%' OR "DUP_PRODUCTO" LIKE '%+%' THEN 'OFERTA' 
+			 ELSE 'REGULAR' END 																						AS "OFERTA_PROMOCION",
 			 '' 																											AS "ITEM",
 			 '' 																											AS "SUBLINEA",
-			 '' 																											AS "SUBSEGMENTO_NOEL", 
-			 "NIVEL"																										AS "NIVEL",	
+			 -- "NIVEL"																										AS "NIVEL",	
 			 "RANGO_SINPROC"																							AS "RANGO_SINPROC",
-			 "TAMANO_SINPROC"																							AS "TAMANO_SINPROC",
-			 SUM("_ventas_valor_nls")                             										AS "VENTAS_VALOR_nls",
+			 "TAMANO_SINPROC"																							AS "TAMANO_SINPROC",	
+			 RIGHT("DUP_PRODUCTO",20)   																		   AS "BARCODE",
+			 SUM("_ventas_valor_nls")                             												AS "VENTAS_VALOR_nls",
 			 SUM("_ventas_volumen_nls") 								   										AS "VENTAS_VOLUMEN_nls",
-			 MAX("DIST_MANEJANTES_POND") 																			AS "DIST_POND_nls",
-			 MAX("DIST_MANEJANTES_NUM") 																			AS "DIST_NUM_nls"
+			 MAX("DIST_TIENDAS_VENDEDORAS_POND") 																AS "DIST_POND_nls",
+			 MAX("DIST_TIENDAS_VENDEDORAS_NUM") 																AS "DIST_NUM_nls"
 	FROM jerarquia_categorias
-	GROUP BY  "PERIODO",
+	GROUP BY  -- "PERIODO",
 				 "producto_nls",
-				 "MERCADO", 
+				 "MERCADO_DL", 
 				 "mercado_", 
 				 "TAMANO", 
 				 "TAMANO_nls",
 				 "DUP_PRODUCTO", 
 				 "FUENTE",
-				 "anio", 
-				 "mes",
-				 "fecha", 
+				 "ANIO", 
+				 "GRUPO",
+				 "MES",
+				 "ANO", 
 				 "negocio", 
 				 "subcategory", 
 				 "category", 
@@ -140,9 +172,10 @@ estructura AS (  -- sumar ventas valor y ventas volumen y agrupar por todos los 
 				 "REGION", 
 				 "CANAL", 
 				 "DUP_OFERTA_PROMOCIONAL", 
-				 "NIVEL",
+				 -- "NIVEL",
 				 "RANGO_SINPROC",
-				 "TAMANO_SINPROC"
+				 "TAMANO_SINPROC",
+				 "DUP_PRODUCTO"
 )
 
 SELECT *

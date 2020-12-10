@@ -21,8 +21,8 @@ SELECT a.*,
 		 o."codificacion" AS "COD_SEGMENTO",
 		 p."codificacion" AS "COD_SEGMENTO_NOEL"			
 FROM PUBLIC.temp_05_va_codificacion3 a
-LEFT JOIN codificacion l ON a."NIVELDEAZUCAR" = l."descripcion" 
-LEFT JOIN codificacion ll ON a."PRESENTACION" = ll."descripcion" 
+LEFT JOIN _va_codificacion l ON a."NIVELDEAZUCAR" = l."descripcion" 
+LEFT JOIN _va_codificacion ll ON a."PRESENTACION" = ll."descripcion" 
 LEFT JOIN _va_codificacion m ON a."SABOR" = m."descripcion" 
 LEFT JOIN _va_codificacion n ON a."SEGM_PRECIO" = n."descripcion" 
 LEFT JOIN _va_codificacion o ON a."SEGMENTO" = o."descripcion" 

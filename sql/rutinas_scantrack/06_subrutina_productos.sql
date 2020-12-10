@@ -4,7 +4,7 @@ CREATE TABLE PUBLIC.temp_06_productos AS
 WITH 
 periodo_act_ordenado AS ( -- VALIDAR ORDENADO DADO QUUE SOLO HAY CARGADO UN MES
 	SELECT "PRODUCTO","GRUPO","COD_NEGOCIO","COD_FUENTE","DES_PRODUCTO"
-	FROM PUBLIC.temp_05_codificacion
+	FROM PUBLIC.temp_05_va_codificacion7
 	ORDER BY "GRUPO" DESC
 	-- LIMIT 10
 ),
@@ -47,9 +47,9 @@ WHERE rownum = 1;
 -- actualizar tabla sa_producto
 DROP TABLE IF EXISTS PUBLIC.temp_06_productos_;
 CREATE TABLE PUBLIC.temp_06_productos_ AS 
-SELECT *
+SELECT "COD_PRODUCTO","DES_PRODUCTO"
 FROM scantrack.sa_producto
-UNION 
+UNION ALL
 SELECT *
 FROM PUBLIC.temp_06_productos;
 
