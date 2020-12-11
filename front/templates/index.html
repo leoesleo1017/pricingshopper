@@ -287,12 +287,33 @@ function show_group_periodo() {
     });    
   }  
 
+function ocultar_group_periodo(){
+  $("#rango_periodo").hide('slow', function(){
+    });
+  $("#group_periodo").hide('slow', function(){
+    });
+}
+
 function hide_group_periodo() {
     $("#rango_periodo").show('fast', function(){
     });
     $("#group_periodo").hide('slow', function(){
     });
   }  
+
+function show_group_categoria() {
+    $("#group_categoria").show('fast', function(){
+    });
+    $("#rango_categoria").hide('slow', function(){
+    });    
+  }  
+
+function hide_group_categoria() {
+    $("#rango_categoria").show('fast', function(){
+    });
+    $("#group_categoria").hide('slow', function(){
+    });
+  }   
 
 function show_group_itemvolumen() {
     $("#group_itemvolumen").show('fast', function(){
@@ -306,21 +327,26 @@ function hide_group_itemvolumen() {
 
 function val_periodo(){
     var select_tipocarga    = $('select#select_tipocarga').val();
-    if (select_tipocarga == 'Full') {
+    if (select_tipocarga == 'Full - Periodo') {
       hide_group_periodo();
       hide_group_itemvolumen();
       mostrar_anio_rango('-- periodo inicio --')
       mostrar_anio_rango('-- periodo fin --')
+      hide_group_categoria();
     } else if (select_tipocarga == 'Incremental'){
       show_group_periodo();
       mostrar_anio();
-
-    }
+      hide_group_categoria();
+    } else if (select_tipocarga == 'Full - Categoria'){
+      show_group_categoria();
+      ocultar_group_periodo();
+      hide_group_itemvolumen();
+    } 
   } 
 
 function val_fuente(){
     var tipocarga      = $('select#select_tipocarga').val();
-    var select_fuente    = $('select#select_fuente').val();
+    var select_fuente  = $('select#select_fuente').val();
     if (tipocarga == 'Incremental') {
       if (select_fuente == 'Scantrack') {
         hide_group_itemvolumen();
@@ -338,6 +364,7 @@ function ejecutar(){
       var periodo        = $('select#select_periodo').val();
       var periodo_ini    = $('select#select_periodo_ini').val();
       var periodo_fin    = $('select#select_periodo_fin').val();
+      var categoria      = $('select#select_categoria').val();
       var fuente         = $('select#select_fuente').val();
       var itemvolumen    = $('select#select_itemvolumen').val();
 
@@ -345,6 +372,7 @@ function ejecutar(){
       $("select#select_periodo_ini").removeAttr("style");
       $("select#select_periodo_fin").removeAttr("style");
       $("select#select_periodo").removeAttr("style");
+      $("select#select_categoria").removeAttr("style");
       $("select#select_fuente").removeAttr("style");
       $("select#select_itemvolumen").removeAttr("style");
 
@@ -364,7 +392,7 @@ function ejecutar(){
         }
       } 
 
-      if (tipocarga == 'Full') {
+      if (tipocarga == 'Full - Periodo') {
           if (periodo_ini=='' || periodo_ini == '-- periodo inicio --'){
             $.notify("El campo periodo ini es obligatorio", "warn");
             //alert("El campo periodo ini es obligatorio");
@@ -395,10 +423,10 @@ function ejecutar(){
           }
       }
 
-      //alert('http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen);
+      alert('http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen+'/categoria/'+categoria);
 
       $.ajax({
-            url: 'http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen,
+            url: 'http://localhost:8000/tipocarga/'+tipocarga+'/periodo/'+periodo+'/periodo_ini/'+periodo_ini+'/periodo_fin/'+periodo_fin+'/fuente/'+fuente+'/itemvolumen/'+itemvolumen+'/categoria/'+categoria,
             type: "GET",            
             
             beforeSend: function(){
@@ -536,7 +564,7 @@ function get_consultar_logs(){
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="index.html">Pricing al comprador</a>
+      <a class="navbar-brand" href="index.html" style="font-size: 50px;">Pricing al comprador</a>
     </div>
   </nav>
 
@@ -588,7 +616,9 @@ function get_consultar_logs(){
                                     </div>
                                       <select id="select_tipocarga" class="form-control" onchange="val_periodo();">
                                           <option>-- seleccione tipo de carga --</option>
-                                          <option>Full</option>
+                                          <option>Full - Categoria</option>
+                                          <option>Full - Periodo</option>
+                                          <!--<option>Incremental - Categoria</option>-->
                                           <option>Incremental</option>
                                       </select>  
                                   </div>   
@@ -616,7 +646,7 @@ function get_consultar_logs(){
                             </div>
                           </div> 
                           
-                           <div id="rango_periodo" style="display: none;">
+                          <div id="rango_periodo" style="display: none;">
                            <label for="full_name_id" class="control-label">Rango Periodo</label>  
                             <div class="row">
                               <div class="col-lg-6 col-md-6">
@@ -647,6 +677,45 @@ function get_consultar_logs(){
                             </div>
                           </div>
 
+                          <div id="group_categoria" style="display: none;">  
+                            <label for="full_name_id" class="control-label">Categoria</label>
+                            <div class="row">
+                              <div class="col-lg-12 col-md-12">
+                                <div class="form-group">                
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-sitemap"></i></span>
+                                    </div>
+                                      <!--<select multiple="" class="form-control">
+                                        <option>option 1</option>
+                                        <option>option 2</option>
+                                        <option>option 3</option>
+                                        <option>option 4</option>
+                                        <option>option 5</option>
+                                      </select>-->
+                                      <select id="select_categoria" class="form-control" >
+                                          <option>-- seleccione categoria --</option>
+                                          <option>MANI</option>
+                                          <option>PASTAS</option>
+                                          <option>HELADOS</option>
+                                          <option>GALLETAS</option>
+                                          <option>VEGETALES EN CONSERVA</option>
+                                          <option>CARNES FRIAS</option>
+                                          <option>SALCHICHAS Y CARNICOS EN CONSE</option>
+                                          <option>CEREALES EN BARRA</option>
+                                          <option>CAFE MOLIDO</option>
+                                          <option>CHOCOLATE DE MESA</option>
+                                          <option>CAFE SOLUBLE</option>
+                                          <option>MODIFICADORES DE LECHE</option>
+                                          <option>CHOCOLATINAS</option>
+                                      </select> 
+                                  </div>   
+                                </div>
+                              </div>
+                            </div>
+                          </div> 
+                          
                           <div>  
                             <label for="full_name_id" class="control-label">Fuente</label>
                             <div class="row">
@@ -704,9 +773,9 @@ function get_consultar_logs(){
             </div>
         </div>
 
-        <div class="col-sm-12 col-md-3">
+        <div class="col-sm-12 col-md-6">
                 <div class="tab-content">
-                    <div id="bloque" class="col-sm-4 col-md-12">
+                    <div id="bloque" class="col-sm-12 col-md-12">
                       <div class="panel panel-default">
                         <div id="box">
                           <div id="box-header" id="proceso_">
@@ -868,6 +937,7 @@ function get_consultar_logs(){
             </div>
         </div>
 
+        <!--
         <div class="col-sm-12 col-md-3">
                 <div class="tab-content">
                     <div id="bloque" class="col-sm-6 col-md-12">
@@ -884,6 +954,7 @@ function get_consultar_logs(){
                 </div>
             </div>
         </div>
+      -->
 
     </div>
 </div>
@@ -911,8 +982,13 @@ function get_consultar_logs(){
                                                                               
                               <pre class="pre2">
                                 <code>
-                                  <div id="logs">
-                                    Logs ...
+                                  <div id="logs">                                    
+   ___        _       _                    __                                        __          
+  / _ \ ____ (_)____ (_)___  ___ _  ___ _ / / ____ ___   __ _   ___   ____ ___ _ ___/ /___   ____
+ / ___// __// // __// // _ \/ _ `/ / _ `// / / __// _ \ /  ' \ / _ \ / __// _ `// _  // _ \ / __/
+/_/   /_/  /_/ \__//_//_//_/\_, /  \_,_//_/  \__/ \___//_/_/_// .__//_/   \_,_/ \_,_/ \___//_/   
+                           /___/                             /_/                                 
+
                                   </div>
                                 </code>
                               </pre>
