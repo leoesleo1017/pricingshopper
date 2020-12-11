@@ -13,12 +13,12 @@ from proceso_scantrack  import ProcesoScantrack
 
 class proceso:    
     def proceso_retail_(self,periodo,itemvol='No',acumVentas=False,categoria=None):  
-        programaRetail = ProcesoRatail()
-        periodoOasis = periodo[-2:] + '20-' + self.val_Cero(str(self.format_mes_num(periodo[0:3]))) + '-01'
+        programaRetail = ProcesoRatail()        
         if itemvol == "Si" and categoria is None:
+            periodoOasis = periodo[-2:] + '20-' + self.val_Cero(str(self.format_mes_num(periodo[0:3]))) + '-01'
             programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=True, categoria=categoria, acumVentas=acumVentas)
         else:
-            programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=False, categoria=categoria, acumVentas=acumVentas)                
+            programaRetail.main(drop=False, mes=periodo, item_volumen=False, categoria=categoria, acumVentas=acumVentas)                
         #res = programaRetail.actualizarcodificaciones()
         #res = programaRetail.reglas_varadinegocios()
         #res = programaRetail.actualizarvariablesadicionales()
