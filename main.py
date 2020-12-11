@@ -31,9 +31,10 @@ class proceso:
         res = programaRetail.itemvolumen(item_volumen=True)
         return res
         
-    def proceso_scantrack_(self,periodo,acumVentas=False,categoria=None):   
+    def proceso_scantrack_(self,periodo,acumVentas=False,categoria=None):  
+        periodoOasis = {'ano' : periodo[-2:]+'20', 'mes' : str(self.format_mes_num(periodo[0:3]))}
         programaScantrack = ProcesoScantrack()
-        programaScantrack.main(drop=False, mes=periodo,categoria=categoria,acumVentas=acumVentas)
+        programaScantrack.main(drop=False, mes=periodo,periodoOasis=periodoOasis,categoria=categoria,acumVentas=acumVentas)
         #programaScantrack.actualizarcodificaciones()
         #programaScantrack.reglas_varadinegocios()
         return "ok"

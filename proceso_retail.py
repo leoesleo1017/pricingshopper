@@ -217,6 +217,7 @@ class ProcesoRatail:
         metodo que se conecta a la base de datos de Oasis y genera la vista y lo conviernte a pandas
         """
         try:
+            res = 'error' 
             if categoria is not None:                
                 params = {"categoria" : categoria}
                 df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
@@ -359,12 +360,10 @@ class ProcesoRatail:
                     m.insert_sql_masivo(df,name_table = nom_bd)
                 else:
                     msg = "La vista no tiene la estructura esperada"
-                    log.Error(msg)
-                    res = 'error'    
+                    log.Error(msg)                       
         except Exception as e:
             msg = "Problemas para cargar la vista desde oasis" + str(e)
             log.Error(msg)
-            res = 'error'
         return res        
         
     def ingresarReglas(self,va):

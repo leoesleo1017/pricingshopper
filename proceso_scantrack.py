@@ -140,6 +140,7 @@ class ProcesoScantrack:
         metodo que se conecta a la base de datos de Oasis y genera la vista y lo conviernte a pandas
         """
         try:
+            res = 'error'
             if categoria is not None:
                 params = {"categoria" : categoria}
                 df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
@@ -206,12 +207,10 @@ class ProcesoScantrack:
                     m.insert_sql_masivo(df,name_table = nom_bd)
                 else:
                     msg = "La vista no tiene la estructura esperada"
-                    log.Error(msg)
-                    res = 'error'    
+                    log.Error(msg)                        
         except Exception as e:
             msg = "Problemas para cargar la vista desde oasis" + str(e)
             log.Error(msg)
-            res = 'error'
         return res                                                  
         
     def ingresarReglas(self,va):
@@ -405,7 +404,7 @@ class ProcesoScantrack:
             res = "error"        
         return res
    
-    def main(self,drop=True,mes='jun_20',periodoOasis={'ano' : '20', 'grupo' : '5'},categoria=None,acumVentas=False):
+    def main(self,drop=True,mes='jun_20',periodoOasis={'ano' : '20', 'mes' : '5'},categoria=None,acumVentas=False):
         #limpiar logs y almacenar en historicos logs
         m.executeFile(self.folder + '00_limpiar_logs.sql')
         msg = "********** Ejecución iniciada *******************"
