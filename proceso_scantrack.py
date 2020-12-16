@@ -143,12 +143,18 @@ class ProcesoScantrack:
             res = 'error'
             if categoria is not None:
                 params = {"categoria" : categoria}
-                df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
+                try:
+                    df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
+                except:
+                    df = None    
             else:
                 params = periodoOasis
-                df = oasis.executeFile(self.folder + '00_vista_oasis.sql',params,devolucion=True)
-            if len(df) == 0:
-                msg = "La vista no tiene información en el periodo suministrado"
+                try:
+                    df = oasis.executeFile(self.folder + '00_vista_oasis.sql',params,devolucion=True)
+                except:
+                    df = None
+            if df is None:
+                msg = "La vista no tiene información en el periodo suministrado, verifique la conexión a Oasis"
                 log.Error(msg)
             else:
                 df = df.rename(columns = {
@@ -431,6 +437,7 @@ class ProcesoScantrack:
                 '08_subrutina_eliminar_tablastemp.sql', # esta rutina se ejecuta tanto en el inicio como en en final del ciclo              
                 '00_rutina_select_mes_cat.sql',
                 '01_rutina_prep_datos.sql',
+                '01_subrutina_productos_nuevos.sql',
                 '02_rutina_var_adi_negocios.sql',
                 '03_rutina_var_adi_rangos.sql',
                 '05_rutina_va_codificacion.sql',
@@ -482,7 +489,7 @@ class ProcesoScantrack:
                                     log.Error(msg)
                                     m.escribirLog_config("[Error] " + msg) 
                                     break 
-                        if lista_rutinas[i] == '09_rutina_transaccional_ventas.sql':        
+                        if lista_rutinas[i] == '08_rutina_transaccional_ventas.sql':        
                             res_ventas_guar = self.guardartransaccionalventas()
                             if res_ventas_guar != "ok":
                                 msg = "Proceso suspendido problemas con las subrutinas de " + lista_rutinas[i] + "guardartransaccionalventas"
@@ -498,7 +505,7 @@ class ProcesoScantrack:
                             log.Error(msg)
                             m.escribirLog_config("[Error] " + msg) 
                             break
-                        if lista_rutinas[i] == '09_rutina_transaccional_ventas.sql' and acumVentas:
+                        if lista_rutinas[i] == '08_rutina_transaccional_ventas.sql' and acumVentas:
                             res_vent = self.acumularVentas()
                             if res_vent != "ok":
                                 msg = "Problemas con la subrutina de " + lista_rutinas[i] + "[acumularVentas]"

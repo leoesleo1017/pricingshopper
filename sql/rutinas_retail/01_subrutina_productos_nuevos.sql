@@ -8,14 +8,13 @@ reduc_cod_pdto1 AS (
 	FROM PUBLIC.temp_s_min_level
 ),
 
-valores_problema AS ( -- pendiente sacar el porcentaje de ceros
+valores_problema AS ( 
 	SELECT *,
-	   "REGION_NLS" || '-' || "CANAL_NLS" AS MERCADO_,  -- los mercados son ciudades principales y no regiones como en retail
-		ROUND("VENTAS_VALOR_nls"::numeric,2) AS "_ventas_valor_nls",
-		ROUND("VENTAS_VOLUMEN_nls"::numeric,2)	AS "_ventas_volumen_nls"
+		ROUND("ventas_valor_nls"::numeric,2) AS "VENTAS_VALOR_nls",
+		ROUND("ventas_volumen_nls"::numeric,2)	AS "VENTAS_VOLUMEN_nls"
 	FROM reduc_cod_pdto1
-	WHERE "VENTAS_VOLUMEN_nls" > 0
-	AND "VENTAS_VALOR_nls" > 0
+	WHERE "ventas_volumen_nls" > 0
+	AND "ventas_valor_nls" > 0
 ),
 
 v_nuevos_productos AS (
@@ -38,14 +37,14 @@ v_nuevos_productos2 AS (
 
 v_nuevos_productos3 AS (
 	SELECT a."DUP_CATEGORIA",
-			 COUNT(1) AS "totalProductos"
+			 COUNT(1) AS "totalProductosb"
 	FROM v_nuevos_productos a
 	JOIN PUBLIC.ma_peso b ON a."producto_nls" = b."producto_nls"
 	GROUP BY a."DUP_CATEGORIA"
 ),
 
 v_nuevos_productos4 AS ( -- esta vista debe ir en una tabla para ir consolidando cada vez que corra el proceso en retail y scantrack, garantizar registros unicos en la tabla por categoria, para los casos que se necesite correr un mes de nuevo por algún error
-	SELECT *
+	SELECT a."DUP_CATEGORIA",a."totalProductos",b."totalProductosb"
 	FROM v_nuevos_productos2 a
 	JOIN v_nuevos_productos3 b ON a."DUP_CATEGORIA" = b."DUP_CATEGORIA"
 )

@@ -220,13 +220,20 @@ class ProcesoRatail:
             res = 'error' 
             if categoria is not None:                
                 params = {"categoria" : categoria}
-                df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
+                try:
+                    df = oasis.executeFile(self.folder + '00_vista_oasis_categoria.sql',params,devolucion=True)
+                except:
+                    df = None    
             else:
                 params = {"periodo" : periodoOasis}
-                df = oasis.executeFile(self.folder + '00_vista_oasis.sql',params,devolucion=True)
-            if len(df) == 0:
-                msg = "La vista no tiene información en el periodo suministrado"
+                try:
+                    df = oasis.executeFile(self.folder + '00_vista_oasis.sql',params,devolucion=True)
+                except:
+                    df = None                             
+            if df is None:
+                msg = "La vista no tiene información en el periodo suministrado,verifique la conexión a Oasis"
                 log.Error(msg)
+                return "error"              
             else:    
                 df = df.rename(columns = {
                     0:'COD_PRODUCTO',
@@ -581,6 +588,7 @@ class ProcesoRatail:
         msg = "********** Ejecucion iniciada *******************"
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)        
+        
         if categoria is not None:
             res_oasis = self.insumoOasisconexion('nielsen_retail_' + categoria.replace(" ","_").lower() ,periodoOasis,categoria=categoria)
             param = {"mes"   : 'nielsen_retail_' + categoria.replace(" ","_").lower()}
@@ -593,6 +601,7 @@ class ProcesoRatail:
             msg = "Proceso suspendido problemas con insumo Oasis"
             log.Error(msg)
             m.escribirLog_config("[Error] " + msg)
+            return "error"              
         else:
             msg = "********** Rutinas core ... *****************"
             log.Info(msg)    
@@ -603,6 +612,7 @@ class ProcesoRatail:
                 '00_item_volumen.sql', #no lo ejecuta , solo lo valida
                 '00_rutina_select_mes_cat.sql',
                 '01_rutina_prep_datos.sql',
+                '01_subrutina_productos_nuevos.sql',
                 '02_rutina_var_adi_negocios.sql',
                 '03_subrutina_h_productos.sql',
                 '03_rutina_var_adi_rangos.sql',
@@ -621,8 +631,8 @@ class ProcesoRatail:
                 '06_rutina_productos.sql',                
                 '07_rutina_atributos_mercado.sql',
                 '06_subrutina_maestra_productos.sql',
-                '08_rutina_transaccional_ventas.sql',
-                '08_subrutina_eliminar_tablastemp.sql'           
+                '08_rutina_transaccional_ventas.sql'
+                #'08_subrutina_eliminar_tablastemp.sql'           
                 )                        
             i = 0
             while i < len(lista_rutinas):    
@@ -666,7 +676,7 @@ class ProcesoRatail:
                                     log.Error(msg)
                                     m.escribirLog_config("[Error] " + msg)
                                     break 
-                        if lista_rutinas[i] == '09_rutina_transaccional_ventas.sql':        
+                        if lista_rutinas[i] == '08_rutina_transaccional_ventas.sql':        
                             res_ventas_guar = self.guardartransaccionalventas()
                             if res_ventas_guar != "ok":
                                 msg = "Proceso suspendido problemas con las subrutinas de " + lista_rutinas[i] + "guardartransaccionalventas"
@@ -682,7 +692,7 @@ class ProcesoRatail:
                             log.Error(msg)
                             m.escribirLog_config("[Error] " + msg)
                             break                        
-                        if lista_rutinas[i] == '09_rutina_transaccional_ventas.sql' and acumVentas:
+                        if lista_rutinas[i] == '08_rutina_transaccional_ventas.sql' and acumVentas:
                             res_vent = self.acumularVentas()
                             if res_vent != "ok":
                                 msg = "Problemas con la subrutina de " + lista_rutinas[i] + "[acumularVentas]"

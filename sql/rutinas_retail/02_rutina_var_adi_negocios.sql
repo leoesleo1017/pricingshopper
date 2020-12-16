@@ -22,7 +22,7 @@ peso_tamano AS ( --VAR ADI_PESO_UXE--
 			 END AS "TAMANO_cruce"	
 			 			
 	FROM PUBLIC.temp_01_jerarquiacategorias a
-	JOIN PUBLIC.ma_peso b ON a."PRODUCTO_nls" = b."producto_nls"
+	LEFT JOIN PUBLIC.ma_peso b ON a."PRODUCTO_nls" = b."producto_nls"
 	JOIN ma_factor c ON a."SUBCATEGORY" = c."subcategory"
 ),
 

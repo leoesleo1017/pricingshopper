@@ -38,14 +38,14 @@ v_nuevos_productos2 AS (
 
 v_nuevos_productos3 AS (
 	SELECT a."DUP_CATEGORIA",
-			 COUNT(1) AS "totalProductos"
+			 COUNT(1) AS "totalProductosb"
 	FROM v_nuevos_productos a
 	JOIN scantrack.ma_peso b ON a."producto_nls" = b."producto_nls"
 	GROUP BY a."DUP_CATEGORIA"
 ),
 
 v_nuevos_productos4 AS ( -- esta vista debe ir en una tabla para ir consolidando cada vez que corra el proceso en retail y scantrack, garantizar registros unicos en la tabla por categoria, para los casos que se necesite correr un mes de nuevo por algún error
-	SELECT *
+	SELECT a."DUP_CATEGORIA",a."totalProductos",b."totalProductosb"
 	FROM v_nuevos_productos2 a
 	JOIN v_nuevos_productos3 b ON a."DUP_CATEGORIA" = b."DUP_CATEGORIA"
 )
