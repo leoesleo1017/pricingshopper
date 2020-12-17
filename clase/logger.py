@@ -4,8 +4,7 @@ import json
 
 class logger():
     def __init__(self, pathlog='logs/', logName="process.log"):
-        """Inicializa el logger
-        
+        """Inicializa el logger        
         Argumentos:
         pathlog -- Ruta donde se escribirá el log
         logName -- Nombre del archivo log (el archivo tendrá un sufihjo con la fecha de creación)        

@@ -720,8 +720,18 @@ item = EnrichmentOps()
 programa = ProcesoRatail()
 m = Sql(programa.get_config('postgresql_retail'),log)
 oasis = Sql(programa.get_config('mysql_oasis'),log)
-   
-     
+
+"""   
+categoria=None
+periodoOasis='2020-09-01'
+mes='jun_20'
+#res_oasis = programa.insumoOasisconexion('nielsen_retail_' + mes,periodoOasis)
+
+folder = 'sql/rutinas_retail/'
+params = {"periodo" : periodoOasis}
+df = oasis.executeFile(folder + '00_vista_oasis.sql',params,devolucion=True)
+"""
+    
 """
 #posgresql
 #con devolucion

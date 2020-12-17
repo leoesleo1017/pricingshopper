@@ -10,6 +10,7 @@ import psycopg2 #postgresql
 import sqlalchemy
 import pandas as pd
 import time
+#import pdb
 
 class Sql():
     
@@ -30,10 +31,11 @@ class Sql():
     def engine(self):
         """ crea la conexión engine multimotor """
         if self.motor == 'mysql':
-            return sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
+            return sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}'.
                     format(self.cache["database_username"],
                            self.cache["database_password"], 
                            self.cache["database_ip"],
+                           '3306',
                            self.cache["database_name"])
                     ) 
         elif self.motor == 'postgresql':
@@ -53,6 +55,7 @@ class Sql():
                       user=self.database_username,
                       passwd=self.database_password,
                       database=self.database_name,
+                      port='3306',
                     )
         elif self.motor == 'postgresql':
             return psycopg2.connect(
@@ -185,7 +188,8 @@ class Sql():
             tic = time.time()
             msg = 'Ejecutando Archivo: {0}'.format(filePath)
             self.log.Info(msg)
-            self.escribirLog_config("[Info] " + msg)
+            if self.motor != 'mysql':
+                self.escribirLog_config("[Info] " + msg)
             #lenMsg = self.lengthMSG
             queries = self.getQueries(filePath, params)
             
@@ -205,7 +209,8 @@ class Sql():
                     else:
                         if self.debug: #debug del contructor
                             msg = '->Ejecutando Consulta {0} del archivo'.format(i)
-                        self.escribirLog_config("[Info] " + msg)
+                        if self.motor != 'mysql':
+                            self.escribirLog_config("[Info] " + msg)
                         self.log.Info(msg)   
                         res = self.execute(q)
                         i += 1
@@ -213,12 +218,14 @@ class Sql():
             toc = time.time()
             msg = 'Duración de Archivo (s): {0}'.format( int(toc-tic) )
             self.log.Info(msg)
-            self.escribirLog_config("[Info] " + msg)
+            if self.motor != 'mysql':
+                self.escribirLog_config("[Info] " + msg)
             return res
         except Exception as e:
             msg = "Problemas con executeFile!, Query {0}, Error: {1} ".format( i , e)
             self.log.Error(msg)
-            self.escribirLog_config("[Error] " + msg)
+            if self.motor != 'mysql':
+                self.escribirLog_config("[Error] " + msg)
             raise
    
         
@@ -226,8 +233,9 @@ class Sql():
         """Ejecuta una instrucción en específico, si param es 'none' sin devolución 
            de resultados de lo contrario devuelve las filas recuperadas"""
         try:
+            #pdb.set_trace()
             conection = self.conection()
-            cur = conection.cursor()
+            cur = conection.cursor()            
             cur.execute(query)                      
             if param is None:               
                 return "ejecución ok"
@@ -236,6 +244,7 @@ class Sql():
                 return res
         except Exception as e:            
             msg = "Problemas para ejecutar en sql " + str(e)
+            pdb.set_trace()
             self.log.Error(msg)            
             return "error"
         finally:

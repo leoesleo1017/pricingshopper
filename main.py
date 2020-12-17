@@ -147,7 +147,7 @@ res_oasis = programaRetail.insumoOasisconexion('nielsen_retail_' + periodo,perio
 print(res_oasis)
 
 programaRetail = ProcesoRatail()
-programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=False, categoria=categoria, acumVentas=acumVentas)
+programaRetail.main(drop=False, mes=periodo, periodoOasis=periodoOasis, item_volumen=False, categoria=None, acumVentas=acumVentas)
 
 """
 
