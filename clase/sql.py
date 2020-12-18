@@ -244,7 +244,7 @@ class Sql():
                 return res
         except Exception as e:            
             msg = "Problemas para ejecutar en sql " + str(e)
-            pdb.set_trace()
+            #pdb.set_trace()
             self.log.Error(msg)            
             return "error"
         finally:
