@@ -27,6 +27,6 @@ LEFT JOIN _va_codificacion aa ON a."TIPO_SABOR" = aa."descripcion"
 LEFT JOIN _va_codificacion ab ON a."VARIEDAD" = ab."descripcion" 
 LEFT JOIN _va_codificacion ag ON a."TIPONEG" = ag."descripcion" 
 LEFT JOIN _va_codificacion ah ON a."NEGOCIO" = ah."descripcion" 
-LEFT JOIN _va_codificacion ai ON a."OFERTA_PROMOCION" = ai."descripcion" 
+LEFT JOIN _va_codificacion ai ON a."OFERTAPROMOCION" = ai."descripcion" 
 LEFT JOIN _va_codificacion aj ON a."MUNDOS_SHOPPER" = aj."descripcion" 
 LEFT JOIN PUBLIC.sa_producto ak  ON a."PRODUCTO" = SUBSTRING(ak."COD_PRODUCTO",6)

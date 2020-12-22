@@ -39,7 +39,7 @@ LEFT JOIN _va_codificacion ae ON a."RANGO_PRECIO_INDIVIDUAL" = ae."descripcion" 
 LEFT JOIN _va_codificacion af ON a."RANGO_TAMANO_INDIVIDUAL" = af."descripcion" AND af."tipo_codificacion" = 'RANGO_TAMANO_INDIVIDUAL'
 LEFT JOIN _va_codificacion ag ON a."TIPONEG" = ag."descripcion" AND ag."tipo_codificacion" = 'TIPONEG'
 LEFT JOIN _va_codificacion ah ON a."NEGOCIO" = ah."descripcion" AND ah."tipo_codificacion" = 'NEGOCIO'
-LEFT JOIN _va_codificacion ai ON a."OFERTA_PROMOCION" = ai."descripcion" AND ai."tipo_codificacion" = 'OFERTAPROMOCIONAL'
+LEFT JOIN _va_codificacion ai ON a."OFERTAPROMOCION" = ai."descripcion" AND ai."tipo_codificacion" = 'OFERTAPROMOCIONAL'
 LEFT JOIN _va_codificacion aj ON a."MUNDOS_SHOPPER" = aj."descripcion" AND aj."tipo_codificacion" = 'MUNDOS_SHOPPER'
 LEFT JOIN PUBLIC.sa_producto ak  ON a."PRODUCTO" = SUBSTRING(ak."COD_PRODUCTO",6)
 

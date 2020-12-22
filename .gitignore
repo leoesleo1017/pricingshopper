@@ -1,0 +1,6 @@
+__pycache__/
+logs/
+clase/__pycache__/
+conf/__pycache__/
+ficheros/codificaciones/
+conexion/

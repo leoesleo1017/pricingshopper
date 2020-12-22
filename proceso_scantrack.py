@@ -416,6 +416,7 @@ class ProcesoScantrack:
         msg = "********** Ejecución iniciada *******************"
         log.Info(msg)
         m.escribirLog_config("[Info] " + msg)        
+        
         if categoria is not None:
             #res_oasis = self.cargarInsumoOasis('VISTA_SCANTRACK_NIELSEN_'+ mes,'nielsen_scantrack_' + mes)
             res_oasis = self.insumoOasisconexion('nielsen_scantrack_' + categoria.replace(" ","_").lower(),periodoOasis,categoria=categoria)
@@ -423,7 +424,9 @@ class ProcesoScantrack:
         else:
             res_oasis = self.insumoOasisconexion('nielsen_scantrack_' + mes,periodoOasis)
             param = {"mes"   : 'nielsen_scantrack_' + mes}
-        #res_oasis = "ok"
+        
+        #param = {"mes"   : 'nielsen_scantrack_' + mes}
+        res_oasis = "ok"
         if res_oasis != "ok":
             msg = "Proceso suspendido problemas con insumo Oasis"
             log.Error(msg)
@@ -475,7 +478,7 @@ class ProcesoScantrack:
                                 log.Error(msg)
                                 m.escribirLog_config("[Error] " + msg) 
                                 break
-                        if lista_rutinas[i] == '04_rutina_rangos.sql':
+                        if lista_rutinas[i] == '03_rutina_var_adi_rangos.sql':
                             res_codi = self.actualizarcodificaciones()
                             if res_codi != "ok":
                                 msg = "Problemas con la subrutina de " + lista_rutinas[i]
